@@ -20,7 +20,8 @@
           <v-btn type="submit" color="primary" block> Login </v-btn>
         </v-form>
         <div class="text-center mt-3">
-          Do Not have an account? <router-link to="/register">Register here</router-link>
+          Do Not have an account?
+          <router-link to="/register">Register here</router-link>
         </div>
       </v-card-text>
     </v-card>
@@ -28,8 +29,10 @@
 </template>
 
 <script>
+import RoutesValidation from "@/mixins/routes.validation";
 export default {
   name: "Login",
+  mixins: [RoutesValidation],
   data() {
     return {
       user: {
@@ -46,7 +49,8 @@ export default {
       this.$api.users
         .getSingleUserObject(user)
         .then((res) => {
-          // this.$bus.$emit("showSnakeBar", res.data.message, "success");
+          localStorage.setItem("token", res?.data?.token);
+          this.$router.push("tags");
         })
         .catch((err) => {
           this.$bus.$emit(
