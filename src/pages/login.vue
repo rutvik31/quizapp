@@ -1,6 +1,6 @@
 <template>
   <v-container class="d-flex justify-center align-center loginContainer">
-    <v-card width="40vw">
+    <v-card width="400px">
       <v-card-title class="text-center">Login</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="login">
@@ -81,6 +81,6 @@ export default {
 </script>
 <style scoped>
 .loginContainer {
-  height: calc(100vh - 70px);
+  height: 100vh;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <v-container class="d-flex justify-center align-center registerContainer">
-    <v-card width="40vw">
+    <v-card width="400px">
       <v-card-title class="text-center">Register</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="register">
@@ -108,6 +108,6 @@ export default {
 </script>
 <style scoped>
 .registerContainer {
-  height: calc(100vh - 70px);
+  height: 100vh;
 }
 </style>

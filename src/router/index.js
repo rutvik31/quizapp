@@ -1,46 +1,53 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Register from '@/pages/register.vue'
-import Login from '@/pages/login.vue'
-import Quizlist from '@/pages/quizList.vue'
-import Tag from '@/pages/tag/tagList.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Register from "@/pages/register.vue";
+import Login from "@/pages/login.vue";
+import Quizlist from "@/pages/quizList.vue";
+import Tag from "@/pages/tag/tagList.vue";
+import QuestionList from "@/pages/question/questionsList.vue";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    redirect: '/login'
+    path: "/",
+    redirect: "/login",
   },
   {
-    path: '/register',
-    name: 'register',
-    component: Register
+    path: "/register",
+    name: "register",
+    component: Register,
   },
   {
-    path: '/login',
-    name: 'login',
-    component: Login
+    path: "/login",
+    name: "login",
+    component: Login,
   },
   {
-    path: '/quizlist',
-    name: 'quizlist',
+    path: "/quizlist",
+    name: "quizlist",
     component: Quizlist,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
-    path: '/tags',
-    name: 'tags',
+    path: "/tags",
+    name: "tags",
     component: Tag,
-    meta: { requiresAuth: true }
-  }
-]
+    // meta: { requiresAuth: true }
+  },
+  {
+    path: "/questions",
+    name: "questions",
+    component: QuestionList,
+    // meta: { requiresAuth: true }
+  },
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
 // Navigation guard to check if the user has a token
 router.beforeEach((to, from, next) => {
@@ -56,4 +63,4 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-export default router
+export default router;
