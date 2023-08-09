@@ -3,7 +3,7 @@
     <v-row class="ma-0">
       <v-col cols="12" class="pa-0">
         <v-card outlined>
-          <v-data-table :headers="headers" :items="questionData">
+          <v-data-table :headers="headers" :items="questionList">
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title> Questions List </v-toolbar-title>
@@ -64,8 +64,8 @@
           <v-autocomplete
             v-model="tags"
             item-text="name"
-            item-value="name"
             :items="tagsList"
+            return-object
             outlined
             dense
             chips
@@ -100,6 +100,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 export default {
   name: "Question",
   data() {
@@ -112,7 +113,7 @@ export default {
       items: ["single", "multiple"],
       itemsForDifficulty: ["easy", "medium", "hard"],
       difficulty: "",
-      tags: "",
+      tags: [],
       notes: "",
       headers: [
         { text: "Question", value: "question" },
@@ -122,17 +123,7 @@ export default {
         { text: "Tags", value: "tags" },
         { text: "Notes", value: "notes" },
       ],
-      questionData: [
-        {
-          question: "Which planet is known as the Red Planet?",
-          options: ["Mars", "Venus", "Earth", "Jupiter"],
-          answer: ["Mars"],
-          ansType: "single",
-          difficulty: "Easy",
-          tags: ["Astronomy"],
-          notes: "Mars is often called the Red Planet due to its color.",
-        },
-      ],
+      questionList: [],
     };
   },
   computed: {
@@ -147,12 +138,58 @@ export default {
     closeDialog() {
       this.dialogVisible = false;
     },
-    saveQuestion() {
-      this.closeDialog();
+    async saveQuestion() {
+      let answerIndex = null;
+
+      if (this.ansType === "single") {
+        answerIndex = this.options.indexOf(this.answer); // Single-choice answer index
+      } else if (this.ansType === "multiple") {
+        answerIndex = this.answer.map((option) => this.options.indexOf(option)); // Array of answer indices
+      }
+      const questionData = {
+        question: this.question,
+        options: this.options.filter((option) => option.trim() !== ""),
+        answer: answerIndex,
+        ansType: this.ansType,
+        difficulty: this.difficulty,
+        tags: this.tags.map((tag) => {
+          return { name: tag.name, color: tag.color };
+        }),
+        notes: this.notes,
+      };
+
+      this.$api.question
+        .createQuestionObject(questionData)
+        .then(() => {
+          this.$bus.$emit(
+            "showSnakeBar",
+            "Question created successfully",
+            "success"
+          );
+        })
+        .catch((err) => {
+          this.$bus.$emit("showSnakeBar", "Error creating question", "error");
+        });
+
+      // Clear the form fields
+      this.dialogVisible = false;
+      this.question = "";
+      this.options = ["", "", "", ""];
+      this.answer = [];
+      this.ansType = "";
+      this.difficulty = "";
+      this.tags = [];
+      this.notes = "";
+    },
+    getQuestionsList() {
+      this.$api.question.getQuestionsList().then((res) => {
+        this.questionList = [...res.data];
+      });
     },
   },
   mounted() {
     this.$store.dispatch("getTagsList");
+    this.getQuestionsList();
   },
 };
 </script>
