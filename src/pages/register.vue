@@ -29,7 +29,7 @@
             type="password"
             :rules="[requiredRule('Password')]"
           ></v-text-field>
-          <v-btn :disabled="isFormValid" type="submit" color="primary" block>
+          <v-btn :disabled="!isFormValid" type="submit" color="primary" block>
             Register
           </v-btn>
         </v-form>
@@ -86,6 +86,7 @@ export default {
             "error"
           );
         });
+      this.user = {};
     },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;

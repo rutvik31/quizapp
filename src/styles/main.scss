@@ -1,0 +1,9 @@
+// SCSS Community
+@use "~ag-grid-community/styles" as ag;
+
+// Choose balham over default alpine
+@include ag.grid-styles(
+  (
+    theme: balham,
+  )
+);

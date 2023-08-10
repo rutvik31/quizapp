@@ -2,8 +2,21 @@
   <v-container>
     <v-row class="ma-0">
       <v-col cols="12" class="pa-0">
+        <v-btn @click="openDialog" color="primary">Add Tag</v-btn>
         <v-card outlined>
-          <v-data-table :headers="headers" :items="tagsList">
+          <div class="ag-theme-balham" style="height: 400px">
+            <!-- sizeColumnsToFit -->
+            <ag-grid-vue
+              style="height: 100%"
+              :gridOptions="gridOptions"
+              :columnDefs="columnDefs"
+              @grid-ready="onGridReady"
+              :context="gridContext"
+              :rowData="rowData"
+              class="ag-theme-balham"
+            ></ag-grid-vue>
+          </div>
+          <!-- <v-data-table :headers="headers" :items="tagsList">
             <template v-slot:top>
               <v-toolbar flat>
                 <v-toolbar-title> Tags List </v-toolbar-title>
@@ -16,7 +29,7 @@
                 mdi-delete
               </v-icon>
             </template>
-          </v-data-table>
+          </v-data-table> -->
         </v-card>
       </v-col>
     </v-row>
@@ -29,10 +42,12 @@
         </v-card-title>
         <v-card-text class="pa-4">
           <v-text-field
+            ref="tagNameField"
             outlined
             dense
             v-model="name"
             label="Tag Name"
+            :rules="[requiredRule('Tag Name')]"
           ></v-text-field>
           <v-color-picker
             v-model="color"
@@ -50,6 +65,7 @@
             depressed
             color="primary"
             class="rounded-0"
+            :disabled="!name"
           >
             save
           </v-btn>
@@ -60,26 +76,48 @@
 </template>
 
 <script>
+import { AgGridVue } from "ag-grid-vue";
+import TagColumn from "@/components/grid-columns/TagActionColumn.vue";
+
 export default {
+  components: {
+    AgGridVue,
+    TagColumn,
+  },
   name: "Tag",
   data() {
     return {
       dialogVisible: false,
       name: "",
       color: "#0277BD",
-      headers: [
-        { text: "Name", value: "name" },
-        { text: "Color", value: "color" },
-        { text: "Actions", value: "actions", sortable: false },
+      gridApi: null,
+      gridOptions: {},
+      columnDefs: [
+        { headerName: "Name", field: "name" },
+        { headerName: "Color", field: "color" },
+        {
+          headerName: "Actions",
+          width: 100,
+          sortable: false,
+          cellRenderer: "TagColumn",
+        },
       ],
     };
   },
   computed: {
-    tagsList() {
+    rowData() {
       return this.$store.state.tagsList;
+    },
+    gridContext() {
+      return {
+        deleteTag: this.deleteTag,
+      };
     },
   },
   methods: {
+    onGridReady(grid) {
+      grid?.api?.sizeColumnsToFit();
+    },
     openDialog() {
       this.dialogVisible = true;
     },
@@ -87,14 +125,18 @@ export default {
       this.dialogVisible = false;
       this.name = "";
       this.color = "#1976D2";
+      this.$refs.tagNameField.resetValidation();
     },
-    saveTag() {
-      const tagData = {
+    async generateTagPayload() {
+      return {
         name: this.name,
         color: this.color,
       };
+    },
+    async saveTag() {
+      const payload = await this.generateTagPayload();
       this.$store
-        .dispatch("createTag", tagData)
+        .dispatch("createTag", payload)
         .then(() => {
           this.$bus.$emit(
             "showSnakeBar",
@@ -121,6 +163,9 @@ export default {
       } catch (err) {
         this.$bus.$emit("showSnakeBar", "Failed to delete tag.", "error");
       }
+    },
+    requiredRule(fieldName) {
+      return (value) => !!value || `${fieldName} is required`;
     },
   },
   mounted() {

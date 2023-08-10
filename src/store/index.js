@@ -23,12 +23,12 @@ export default new Vuex.Store({
   actions: {
     getTagsList(context) {
       return api.tag.getTagsList().then((res) => {
-        context.commit("setTagsList", res.data);
+        context.commit("setTagsList", res.data.data);
       });
     },
     createTag(context, tagData) {
       return api.tag.createTagObject(tagData).then((res) => {
-        context.commit("addTag", res.data);
+        context.commit("addTag", res.data.data);
       });
     },
     deleteTag(context, tagId) {
