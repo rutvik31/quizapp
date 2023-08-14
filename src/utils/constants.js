@@ -9,3 +9,5 @@ export const DELETE_TAG = "/tagName";
 // For Questions
 export const CREATE_QUESTION = "/create-questions";
 export const GET_QUESTIONS = "/get-questions";
+export const GET_QUESTION_BY_ID = "/get-questions";
+export const EDIT_QUESTION = "/update-question";
