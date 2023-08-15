@@ -15,7 +15,7 @@ export default (axios) => ({
   getQuestionById(id) {
     return axios.get(`${GET_QUESTION_BY_ID}/${id}`);
   },
-  updateQuestion(id) {
-    return axios.put(`${EDIT_QUESTION}/${id}`);
+  updateQuestion(id, payload) {
+    return axios.put(`${EDIT_QUESTION}/${id}`, payload);
   },
 });

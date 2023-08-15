@@ -77,7 +77,7 @@ export default {
       this.$api.users
         .createUserObject(user)
         .then((res) => {
-          this.$bus.$emit("showSnakeBar", res.data.message, "success");
+          this.$bus.$emit("showSnakeBar", res?.data?.message, "success");
         })
         .catch((err) => {
           this.$bus.$emit(

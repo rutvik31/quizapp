@@ -150,6 +150,7 @@ export default {
     dialogVisible(val) {
       if (val) {
         if (this.userData) {
+          console.log(this.userData);
           this.populateQuestionObject(this.userData);
         }
       } else {
@@ -201,6 +202,7 @@ export default {
           return { name, color };
         }),
       };
+      console.log(questionPayload, "3");
       return questionPayload;
     },
     async saveQuestion() {
@@ -242,7 +244,6 @@ export default {
     },
     populateQuestionObject(data) {
       this.questionObject = {
-        ...data.meta,
         ...data,
       };
 
@@ -254,6 +255,7 @@ export default {
           (index) => this.questionObject.options[index]
         );
       }
+      console.log(this.questionObject, "2");
     },
     answerValidation() {
       this.questionObject.answer =

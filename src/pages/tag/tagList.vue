@@ -11,7 +11,7 @@
               :columnDefs="columnDefs"
               :context="gridContext"
               :rowData="rowData"
-              @grid-size-changed="onGridReady"
+              @grid-size-changed="gridSizeChanged"
             ></ag-grid-vue>
           </div>
         </v-card>
@@ -58,7 +58,7 @@ export default {
   },
   computed: {
     rowData() {
-      return this.$store.state.tagsList;
+      return this.$store?.state?.tagsList;
     },
     gridContext() {
       return {
@@ -67,9 +67,7 @@ export default {
     },
   },
   methods: {
-    onGridReady(grid) {
-      const columnCount = grid.columnApi.columnModel.gridColumns.length;
-      grid.clientWidth / columnCount;
+    gridSizeChanged(grid) {
       grid?.api?.sizeColumnsToFit();
     },
     openDialog() {

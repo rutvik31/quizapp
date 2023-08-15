@@ -79,7 +79,7 @@ export default {
       this.resetForm();
     },
     resetForm() {
-      this.$refs.tagNameField.resetValidation();
+      this.$refs?.tagNameField?.resetValidation();
     },
     async generateTagPayload() {
       return {
@@ -105,7 +105,7 @@ export default {
         .catch((err) => {
           this.$bus.$emit(
             "showSnakeBar",
-            err?.response?.data?.message,
+            err?.response?.data?.message || "Some error occured",
             "error"
           );
         });

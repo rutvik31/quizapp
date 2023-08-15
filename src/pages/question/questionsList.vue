@@ -11,7 +11,7 @@
               :columnDefs="columnDefs"
               :rowData="rowData"
               :context="gridContext"
-              @grid-size-changed="onGridReady"
+              @grid-size-changed="gridSizeChanged"
             ></ag-grid-vue>
           </div>
         </v-card>
@@ -97,9 +97,7 @@ export default {
       this.userData = null;
       this.dialogVisible = true;
     },
-    onGridReady(grid) {
-      const columnCount = grid.columnApi.columnModel.gridColumns.length;
-      grid.clientWidth / columnCount;
+    gridSizeChanged(grid) {
       grid?.api?.sizeColumnsToFit();
     },
     getQuestionsList() {
@@ -109,7 +107,9 @@ export default {
     },
     editQuestion(id) {
       this.$api.question.getQuestionById(id).then((res) => {
-        this.userData = res?.data?.data;
+        const { options, tags } = res?.data?.data?.meta;
+        delete res?.data?.data?.meta;
+        this.userData = { options, tags, ...res?.data?.data };
         this.dialogVisible = true;
       });
     },
