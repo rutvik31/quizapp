@@ -1,9 +1,12 @@
 <template>
   <div>
-    <v-btn @click="openUploadDialog" color="primary">Upload Questions</v-btn>
     <v-dialog v-model="uploadDialogVisible" max-width="400px">
       <v-card>
-        <v-card-title>Upload Questions</v-card-title>
+        <v-card-title>
+          Upload Questions
+          <v-spacer></v-spacer>
+          <v-icon @click="closeUploadDialog">mdi-close</v-icon>
+        </v-card-title>
         <v-card-text>
           <v-file-input
             v-model="file"
@@ -11,9 +14,17 @@
             label="Select Excel File"
           ></v-file-input>
         </v-card-text>
-        <v-card-actions>
-          <v-btn @click="uploadQuestions" color="primary">Upload</v-btn>
-          <v-btn @click="closeUploadDialog" color="secondary">Cancel</v-btn>
+        <v-card-actions class="pa-0">
+          <v-btn
+            :disabled="!file"
+            block
+            depressed
+            class="rounded-0"
+            @click="handleUpload"
+            color="primary"
+          >
+            Upload
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -96,14 +107,16 @@
                   v-model="questionObject.tags"
                   item-text="name"
                   :items="tagsList"
+                  chips
+                  deletable-chips
+                  multiple
+                  small-chips
                   return-object
                   outlined
                   dense
-                  small-chips
                   clearable
                   label="Select tags"
                   hide-details="auto"
-                  multiple
                   :rules="[
                     (value) =>
                       !!(value && value.length) ||
@@ -144,11 +157,12 @@
 </template>
 
 <script>
-import * as XLSX from "xlsx";
+import { uploadQuestions } from "@/utils/bulkUpload";
 export default {
-  name: "CreateQuestion",
+  name: "QuestionForm",
   props: {
     value: Boolean,
+    uploadDialogVisible: Boolean,
     userData: Object,
   },
   data() {
@@ -163,7 +177,6 @@ export default {
         notes: "",
       },
       valid: false,
-      uploadDialogVisible: false,
       file: null,
       itemsForDifficulty: ["easy", "medium", "hard"],
     };
@@ -181,7 +194,7 @@ export default {
   },
   computed: {
     tagsList() {
-      return this.$store.state.tagsList;
+      return this.$store?.state?.tags?.tagsList?.data;
     },
     dialogVisible: {
       get() {
@@ -194,17 +207,13 @@ export default {
   },
   methods: {
     closeDialog() {
-      this.dialogVisible = false;
       this.resetForm();
+      this.dialogVisible = false;
       this.$refs.form.resetValidation();
     },
-    openUploadDialog() {
-      this.uploadDialogVisible = true;
-    },
-
     closeUploadDialog() {
-      this.uploadDialogVisible = false;
       this.file = null;
+      this.$emit("close-upload-dialog");
     },
     resetForm() {
       this.questionObject = {
@@ -270,6 +279,11 @@ export default {
           });
       }
     },
+    async handleUpload() {
+      uploadQuestions(this.file, this.$api, this.$bus);
+      this.$store.dispatch("questions/getQuestionsList");
+      this.closeUploadDialog();
+    },
     populateQuestionObject(data) {
       this.questionObject = {
         ...data,
@@ -289,66 +303,12 @@ export default {
         this.questionObject.ansType === "single" ? "" : [];
       this.$refs?.answer?.resetValidation();
     },
-    async uploadQuestions() {
-      if (!this.file) {
-        return;
-      }
-
-      const fileReader = new FileReader();
-      fileReader.onload = (e) => {
-        const arrayBuffer = e.target.result;
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const questions = XLSX.utils.sheet_to_json(worksheet);
-
-        questions.forEach(async (questionData) => {
-          const items = questionData.tags.split(",");
-          const resultObjects = items.map((item) => {
-            const matches = item.trim().match(/^(.*?)\s+\((.*?)\)$/);
-            if (matches) {
-              return {
-                name: matches[1],
-                color: matches[2],
-              };
-            } else {
-              console.log("Invalid input format:", item);
-              return null;
-            }
-          });
-          questionData.tags = resultObjects;
-          questionData.options = questionData.options.split(", ");
-          console.log(questionData);
-
-          await this.$api.question
-            .createQuestionObject(questionData)
-            .then(() => {
-              this.$bus.$emit(
-                "showSnakeBar",
-                "Question created successfully",
-                "success"
-              );
-              // Clear the form fields
-              this.$emit("form-submitted");
-            })
-            .catch((err) => {
-              this.$bus.$emit(
-                "showSnakeBar",
-                "Error creating question",
-                "error"
-              );
-            });
-        });
-      };
-
-      fileReader.readAsArrayBuffer(this.file);
-    },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;
     },
   },
   mounted() {
-    this.$store.dispatch("getTagsList");
+    this.$store.dispatch("tags/getTagsList");
   },
 };
 </script>

@@ -4,8 +4,8 @@ export default (axios) => ({
   createTagObject(tag) {
     return axios.post(CREATE_TAG, tag);
   },
-  getTagsList() {
-    return axios.get(GET_TAG);
+  getTagsList(queryParams) {
+    return axios.get(GET_TAG, { params: queryParams });
   },
   deleteSingleTagObject(id) {
     return axios.delete(`${DELETE_TAG}/${id}`);

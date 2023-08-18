@@ -7,11 +7,10 @@
         <v-icon @click="closeDialog">mdi-close</v-icon>
       </v-card-title>
       <v-card-text class="px-4 py-0">
-        <v-form v-model="valid">
+        <v-form v-model="valid" ref="form">
           <v-row class="ma-0">
             <v-col cols="12">
               <v-text-field
-                ref="tagNameField"
                 outlined
                 dense
                 v-model="name"
@@ -75,11 +74,11 @@ export default {
   },
   methods: {
     closeDialog() {
-      this.dialogVisible = false;
       this.resetForm();
+      this.dialogVisible = false;
     },
     resetForm() {
-      this.$refs?.tagNameField?.resetValidation();
+      this.$refs.form.reset();
     },
     async generateTagPayload() {
       return {

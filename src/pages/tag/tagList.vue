@@ -1,8 +1,36 @@
 <template>
   <v-container>
     <v-row class="ma-0">
+      <v-col cols="12" class="px-0">
+        <div class="d-flex align-center">
+          <div class="header-title text-h5">Add Tag</div>
+          <v-spacer></v-spacer>
+          <v-menu offset-y left max-width="100%">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn dark icon v-bind="attrs" v-on="on">
+                <v-icon
+                  color="#0277BD"
+                  x-large
+                  class="icon-margin-right"
+                  @click="openDialog"
+                >
+                  mdi-plus-circle
+                </v-icon>
+              </v-btn>
+            </template>
+          </v-menu>
+        </div>
+      </v-col>
+      <v-col cols="12" class="px-0">
+        <v-text-field
+          dense
+          outlined
+          v-model="searchValue"
+          label="Search for tag"
+          hide-details="auto"
+        ></v-text-field>
+      </v-col>
       <v-col cols="12" class="pa-0">
-        <v-btn @click="openDialog" color="primary">Add Tag</v-btn>
         <v-card outlined>
           <div class="ag-theme-balham">
             <ag-grid-vue
@@ -16,8 +44,15 @@
           </div>
         </v-card>
       </v-col>
+      <v-col cols="12" v-if="itemsPerPage > 10">
+        <v-pagination
+          v-model="currentPage"
+          :length="totalPages"
+          @input="getTag"
+        ></v-pagination>
+      </v-col>
     </v-row>
-    <createTagForm
+    <TagForm
       ref="tagNameField"
       v-model="dialogVisible"
       @form-submitted="getTag"
@@ -28,13 +63,13 @@
 <script>
 import { AgGridVue } from "ag-grid-vue";
 import TagColumn from "@/components/grid-columns/TagActionColumn.vue";
-import createTagForm from "./createTagForm.vue";
+import TagForm from "@/pages/tag/tagForm.vue";
 
 export default {
   components: {
     AgGridVue,
     TagColumn,
-    createTagForm,
+    TagForm,
   },
   name: "Tag",
   data() {
@@ -54,11 +89,21 @@ export default {
           cellRenderer: "TagColumn",
         },
       ],
+      searchValue: "",
+      debounceTimer: null,
+      currentPage: 1,
+      itemsPerPage: 10,
+      totalPages: 0,
     };
+  },
+  watch: {
+    searchValue(newQuery) {
+      this.handleValueChange(newQuery);
+    },
   },
   computed: {
     rowData() {
-      return this.$store?.state?.tagsList;
+      return this.$store?.state?.tags?.tagsList?.data;
     },
     gridContext() {
       return {
@@ -78,8 +123,26 @@ export default {
       this.name = "";
       this.color = "#1976D2";
     },
+    handleValueChange(newQuery) {
+      if (this.searchValue === newQuery) {
+        if (this.debounceTimer) {
+          clearTimeout(this.debounceTimer);
+        }
+        this.debounceTimer = setTimeout(() => {
+          this.getTag();
+        }, 1000);
+      }
+    },
     getTag() {
-      this.$store.dispatch("getTagsList");
+      const queryParams = {
+        search: this.searchValue,
+        page: this.currentPage,
+        perPage: this.itemsPerPage,
+      };
+      this.$store.dispatch("tags/getTagsList", queryParams).then(() => {
+        this.totalPages =
+          this.$store?.state?.tags?.tagsList?.pagination?.totalPages || 1;
+      });
     },
     async deleteTag(tagId) {
       try {

@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Register from "@/pages/register.vue";
 import Login from "@/pages/login.vue";
-import Quizlist from "@/pages/quizList.vue";
+import Quizlist from "@/pages/quiz/quizList.vue";
 import Tag from "@/pages/tag/tagList.vue";
 import QuestionList from "@/pages/question/questionsList.vue";
 
@@ -33,13 +33,13 @@ const routes = [
     path: "/tags",
     name: "tags",
     component: Tag,
-    // meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: "/questions",
     name: "questions",
     component: QuestionList,
-    // meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
 ];
 
