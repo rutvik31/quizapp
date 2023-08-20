@@ -83,10 +83,12 @@
     </v-row>
     <QuestionForm
       v-model="dialogVisible"
-      :upload-dialog-visible="uploadDialogVisible"
       :user-data="userData"
       @form-submitted="getQuestionsList"
-      @close-upload-dialog="closeUploadDialog"
+    />
+    <BulkUpload
+      v-model="uploadDialogVisible"
+      @upload-success="getQuestionsList"
     />
   </v-container>
 </template>
@@ -96,6 +98,7 @@ import { AgGridVue } from "ag-grid-vue";
 import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
 import QuestionActionDeleteAndEdit from "@/components/grid-columns/QuestionActionDeleteAndEdit.vue";
 import QuestionForm from "@/pages/question/questionForm.vue";
+import BulkUpload from "./bulkUpload.vue";
 
 export default {
   name: "Question",
@@ -104,6 +107,7 @@ export default {
     QuestionActionColumn,
     QuestionActionDeleteAndEdit,
     QuestionForm,
+    BulkUpload,
   },
   data() {
     return {
@@ -190,9 +194,6 @@ export default {
     openUploadDialog() {
       this.uploadDialogVisible = true;
     },
-    closeUploadDialog() {
-      this.uploadDialogVisible = false;
-    },
     gridSizeChanged(grid) {
       grid?.api?.sizeColumnsToFit();
     },
@@ -218,6 +219,7 @@ export default {
         page: this.currentPage,
         perPage: this.itemsPerPage,
       };
+
       this.$store
         .dispatch("questions/getQuestionsList", queryParams)
         .then(() => {

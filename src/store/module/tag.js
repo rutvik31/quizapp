@@ -21,10 +21,10 @@ const mutations = {
     };
   },
   addTag(state, tagData) {
-    state.tagsList.push(tagData);
+    state.tagsList.data.push(tagData);
   },
   removeTag(state, tagId) {
-    state.tagsList = state.tagsList.filter((tag) => tag._id !== tagId);
+    state.tagsList.data = state.tagsList.data.filter((tag) => tag._id !== tagId);
   },
 };
 

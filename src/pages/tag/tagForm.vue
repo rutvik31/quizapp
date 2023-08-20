@@ -51,7 +51,7 @@
 
 <script>
 export default {
-  name: "CreateTag",
+  name: "TagForm",
   props: {
     value: Boolean,
   },
@@ -74,7 +74,6 @@ export default {
   },
   methods: {
     closeDialog() {
-      this.resetForm();
       this.dialogVisible = false;
     },
     resetForm() {
@@ -89,7 +88,7 @@ export default {
     async saveTag() {
       const payload = await this.generateTagPayload();
       this.$store
-        .dispatch("createTag", payload)
+        .dispatch("tags/createTag", payload)
         .then(() => {
           this.$bus.$emit(
             "showSnakeBar",
@@ -102,6 +101,7 @@ export default {
           this.closeDialog();
         })
         .catch((err) => {
+          console.log(err);
           this.$bus.$emit(
             "showSnakeBar",
             err?.response?.data?.message || "Some error occured",

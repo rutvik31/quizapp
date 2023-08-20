@@ -146,7 +146,7 @@ export default {
     },
     async deleteTag(tagId) {
       try {
-        await this.$store.dispatch("deleteTag", tagId);
+        await this.$store.dispatch("tags/deleteTag", tagId);
         this.$bus.$emit("showSnakeBar", "Tag deleted successfully", "success");
       } catch (err) {
         this.$bus.$emit("showSnakeBar", "Failed to delete tag.", "error");

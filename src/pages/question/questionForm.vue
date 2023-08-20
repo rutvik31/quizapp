@@ -1,33 +1,5 @@
 <template>
   <div>
-    <v-dialog v-model="uploadDialogVisible" max-width="400px">
-      <v-card>
-        <v-card-title>
-          Upload Questions
-          <v-spacer></v-spacer>
-          <v-icon @click="closeUploadDialog">mdi-close</v-icon>
-        </v-card-title>
-        <v-card-text>
-          <v-file-input
-            v-model="file"
-            accept=".xlsx"
-            label="Select Excel File"
-          ></v-file-input>
-        </v-card-text>
-        <v-card-actions class="pa-0">
-          <v-btn
-            :disabled="!file"
-            block
-            depressed
-            class="rounded-0"
-            @click="handleUpload"
-            color="primary"
-          >
-            Upload
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-dialog v-model="dialogVisible" scrollable persistent max-width="600px">
       <v-card>
         <v-card-title class="px-4">
@@ -157,12 +129,10 @@
 </template>
 
 <script>
-import { uploadQuestions } from "@/utils/bulkUpload";
 export default {
   name: "QuestionForm",
   props: {
     value: Boolean,
-    uploadDialogVisible: Boolean,
     userData: Object,
   },
   data() {
@@ -177,7 +147,6 @@ export default {
         notes: "",
       },
       valid: false,
-      file: null,
       itemsForDifficulty: ["easy", "medium", "hard"],
     };
   },
@@ -210,10 +179,6 @@ export default {
       this.resetForm();
       this.dialogVisible = false;
       this.$refs.form.resetValidation();
-    },
-    closeUploadDialog() {
-      this.file = null;
-      this.$emit("close-upload-dialog");
     },
     resetForm() {
       this.questionObject = {
@@ -271,18 +236,12 @@ export default {
             );
             // Clear the form fields
             this.$emit("form-submitted");
-            this.resetForm();
             this.closeDialog();
           })
           .catch((err) => {
             this.$bus.$emit("showSnakeBar", "Error creating question", "error");
           });
       }
-    },
-    async handleUpload() {
-      uploadQuestions(this.file, this.$api, this.$bus);
-      this.$store.dispatch("questions/getQuestionsList");
-      this.closeUploadDialog();
     },
     populateQuestionObject(data) {
       this.questionObject = {
