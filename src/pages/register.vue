@@ -3,7 +3,7 @@
     <v-card width="400px">
       <v-card-title class="text-center">Register</v-card-title>
       <v-card-text>
-        <v-form @submit.prevent="register">
+        <v-form v-model="valid" @submit.prevent="register" ref="form">
           <v-text-field
             v-model="user.firstName"
             label="First Name"
@@ -29,7 +29,7 @@
             type="password"
             :rules="[requiredRule('Password')]"
           ></v-text-field>
-          <v-btn :disabled="!isFormValid" type="submit" color="primary" block>
+          <v-btn :disabled="!valid" type="submit" color="primary" block>
             Register
           </v-btn>
         </v-form>
@@ -56,18 +56,8 @@ export default {
         password: "",
       },
       errors: {},
+      valid: false,
     };
-  },
-  computed: {
-    isFormValid() {
-      return (
-        this.user.firstName &&
-        this.user.lastName &&
-        this.user.email &&
-        this.user.password &&
-        this.isValidEmail(this.user.email)
-      );
-    },
   },
   methods: {
     register() {
@@ -86,7 +76,7 @@ export default {
             "error"
           );
         });
-      this.user = {};
+      this.$refs.form.reset();
     },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;
@@ -109,6 +99,6 @@ export default {
 </script>
 <style scoped>
 .registerContainer {
-  height: 100vh;
+  height: 100%;
 }
 </style>

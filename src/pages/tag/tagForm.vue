@@ -7,11 +7,10 @@
         <v-icon @click="closeDialog">mdi-close</v-icon>
       </v-card-title>
       <v-card-text class="px-4 py-0">
-        <v-form v-model="valid">
+        <v-form v-model="valid" ref="form">
           <v-row class="ma-0">
             <v-col cols="12">
               <v-text-field
-                ref="tagNameField"
                 outlined
                 dense
                 v-model="name"
@@ -52,7 +51,7 @@
 
 <script>
 export default {
-  name: "CreateTag",
+  name: "TagForm",
   props: {
     value: Boolean,
   },
@@ -76,10 +75,9 @@ export default {
   methods: {
     closeDialog() {
       this.dialogVisible = false;
-      this.resetForm();
     },
     resetForm() {
-      this.$refs?.tagNameField?.resetValidation();
+      this.$refs.form.reset();
     },
     async generateTagPayload() {
       return {
@@ -90,7 +88,7 @@ export default {
     async saveTag() {
       const payload = await this.generateTagPayload();
       this.$store
-        .dispatch("createTag", payload)
+        .dispatch("tags/createTag", payload)
         .then(() => {
           this.$bus.$emit(
             "showSnakeBar",
@@ -103,6 +101,7 @@ export default {
           this.closeDialog();
         })
         .catch((err) => {
+          console.log(err);
           this.$bus.$emit(
             "showSnakeBar",
             err?.response?.data?.message || "Some error occured",

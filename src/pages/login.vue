@@ -3,7 +3,7 @@
     <v-card width="400px">
       <v-card-title class="text-center">Login</v-card-title>
       <v-card-text>
-        <v-form @submit.prevent="login">
+        <v-form v-model="valid" ref="form" @submit.prevent="login">
           <v-text-field
             v-model="user.email"
             label="Email"
@@ -17,7 +17,9 @@
             type="password"
             :rules="[requiredRule('Password')]"
           ></v-text-field>
-          <v-btn type="submit" color="primary" block> Login </v-btn>
+          <v-btn :disabled="!valid" type="submit" color="primary" block>
+            Login
+          </v-btn>
         </v-form>
         <div class="text-center mt-3">
           Do Not have an account?
@@ -39,26 +41,18 @@ export default {
         email: "",
         password: "",
       },
+      valid: false,
     };
   },
   methods: {
-    login() {
-      const user = {
-        ...this.user,
-      };
-      this.$api.users
-        .getSingleUserObject(user)
-        .then((res) => {
-          localStorage.setItem("token", res?.data?.token);
-          this.$router.push("tags");
-        })
-        .catch((err) => {
-          this.$bus.$emit(
-            "showSnakeBar",
-            err?.response?.data?.message,
-            "error"
-          );
-        });
+    async login() {
+      try {
+        await this.$store.dispatch("auth/login", this.user);
+        this.$router.push("tags");
+        this.$refs.form.reset();
+      } catch (err) {
+        this.$bus.$emit("showSnakeBar", err?.response?.data?.message, "error");
+      }
     },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;
@@ -81,6 +75,6 @@ export default {
 </script>
 <style scoped>
 .loginContainer {
-  height: 100vh;
+  height: 100%;
 }
 </style>

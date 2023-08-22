@@ -8,6 +8,11 @@ export const DELETE_TAG = "/tagName";
 
 // For Questions
 export const CREATE_QUESTION = "/create-questions";
+export const BULK_UPLOAD_QUESTIONS = "/bulk-upload";
 export const GET_QUESTIONS = "/get-questions";
 export const GET_QUESTION_BY_ID = "/get-questions";
 export const EDIT_QUESTION = "/update-question";
+
+// For Quiz
+export const CREATE_QUIZ = "/create-quiz";
+export const GET_QUIZ = "/get-quiz";

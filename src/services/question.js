@@ -1,5 +1,6 @@
 import {
   CREATE_QUESTION,
+  BULK_UPLOAD_QUESTIONS,
   GET_QUESTIONS,
   GET_QUESTION_BY_ID,
   EDIT_QUESTION,
@@ -8,6 +9,9 @@ import {
 export default (axios) => ({
   createQuestionObject(question) {
     return axios.post(CREATE_QUESTION, question);
+  },
+  bulkUploadQuestions(questions) {
+    return axios.post(BULK_UPLOAD_QUESTIONS, questions);
   },
   getQuestionsList(queryParams) {
     return axios.get(GET_QUESTIONS, { params: queryParams });
