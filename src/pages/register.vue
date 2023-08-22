@@ -97,8 +97,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.registerContainer {
-  height: 100%;
-}
-</style>

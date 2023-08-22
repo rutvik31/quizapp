@@ -29,9 +29,14 @@
           dense
           outlined
           v-model="searchValue"
+          :clearable="true"
           label="Search for a question"
           hide-details="auto"
-        ></v-text-field>
+        >
+          <template v-slot:append>
+            <v-icon>mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
       </v-col>
       <v-col cols="4" class="pr-0">
         <v-select
@@ -45,7 +50,13 @@
           multiple
           outlined
           dense
-        />
+        >
+          <template v-slot:append>
+            <v-icon>
+              {{ tagValue.length ? "mdi-filter" : "mdi-filter-outline" }}
+            </v-icon>
+          </template>
+        </v-select>
       </v-col>
       <v-col cols="4" class="pr-0">
         <v-select
@@ -57,15 +68,21 @@
           multiple
           outlined
           dense
-        />
+        >
+          <template v-slot:append>
+            <v-icon>
+              {{ diffValue.length ? "mdi-filter" : "mdi-filter-outline" }}
+            </v-icon>
+          </template>
+        </v-select>
       </v-col>
       <v-col cols="12" class="pa-0">
         <v-card outlined>
           <div class="ag-theme-balham">
             <ag-grid-vue
-              style="width: 100%; height: 100%"
               :gridOptions="gridOptions"
               :columnDefs="columnDefs"
+              :defaultColDef="defaultColDef"
               :rowData="rowData"
               :context="gridContext"
               @grid-size-changed="gridSizeChanged"
@@ -73,7 +90,7 @@
           </div>
         </v-card>
       </v-col>
-      <v-col cols="12" v-if="itemsPerPage > 10">
+      <v-col cols="12">
         <v-pagination
           v-model="currentPage"
           :length="totalPages"
@@ -112,7 +129,11 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: "Question", field: "question", resizable: true },
+        {
+          headerName: "Question",
+          field: "question",
+          sortable: true,
+        },
         {
           headerName: "Answer",
           field: "answer",
@@ -130,27 +151,29 @@ export default {
               : "";
           },
         },
-        { headerName: "AnsType", field: "ansType" },
-        { headerName: "Difficulty", field: "difficulty" },
-        {
-          headerName: "Tags",
-          cellRenderer: "QuestionActionColumn",
-          resizable: true,
-        },
-        { headerName: "Notes", field: "notes", resizable: true },
+        { headerName: "AnsType", field: "ansType", sortable: true },
+        { headerName: "Difficulty", field: "difficulty", sortable: true },
+        { headerName: "Tags", cellRenderer: "QuestionActionColumn" },
+        { headerName: "Notes", field: "notes" },
         {
           headerName: "Actions",
           cellRenderer: "QuestionActionDeleteAndEdit",
           width: 100,
-          sortable: false,
         },
       ],
-      dialogVisible: false,
-      uploadDialogVisible: false,
-      gridApi: null,
+      defaultColDef: {
+        resizable: true,
+        cellStyle: {
+          "font-size": "14px",
+          "font-family": "'Roboto'",
+        },
+      },
       gridOptions: {
         domLayout: "autoHeight",
       },
+      dialogVisible: false,
+      uploadDialogVisible: false,
+      gridApi: null,
       userData: null,
       searchValue: "",
       tagValue: "",
@@ -242,12 +265,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.max-width {
-  max-width: none !important;
-}
-.icon-margin-right {
-  margin-right: 3px;
-}
-</style>

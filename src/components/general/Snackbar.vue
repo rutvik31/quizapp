@@ -8,6 +8,10 @@
     text
     timeout="3000"
   >
+    <v-icon :color="color" v-if="type === 'success'">mdi-check-circle</v-icon>
+    <v-icon :color="color" v-else-if="type === 'error'">
+      mdi-alert-circle
+    </v-icon>
     {{ message }}
   </v-snackbar>
 </template>

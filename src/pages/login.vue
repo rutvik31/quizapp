@@ -48,7 +48,7 @@ export default {
     async login() {
       try {
         await this.$store.dispatch("auth/login", this.user);
-        this.$router.push("tags");
+        this.$router.push({ name: "admin-dashboard" });
         this.$refs.form.reset();
       } catch (err) {
         this.$bus.$emit("showSnakeBar", err?.response?.data?.message, "error");
@@ -73,8 +73,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.loginContainer {
-  height: 100%;
-}
-</style>

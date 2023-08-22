@@ -240,6 +240,7 @@ export default {
           })
           .catch((err) => {
             this.$bus.$emit("showSnakeBar", "Error creating question", "error");
+            this.closeDialog();
           });
       }
     },

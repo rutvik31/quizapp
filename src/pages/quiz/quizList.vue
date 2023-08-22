@@ -1,8 +1,5 @@
 <template>
   <v-container>
-    <div>
-      <v-btn color="primary" @click="logout">Logout</v-btn>
-    </div>
     <v-row class="ma-0">
       <v-col cols="12" class="px-0">
         <div class="d-flex align-center">
@@ -30,6 +27,7 @@
             <ag-grid-vue
               style="width: 100%; height: 100%"
               :columnDefs="columnDefs"
+              :defaultColDef="defaultColDef"
               :gridOptions="gridOptions"
               :rowData="rowData"
               @grid-size-changed="gridSizeChanged"
@@ -55,12 +53,19 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: "Title", field: "title", resizable: true },
-        { headerName: "Description", field: "description", resizable: true },
+        { headerName: "Title", field: "title" },
+        { headerName: "Description", field: "description" },
       ],
       gridApi: null,
       gridOptions: {
         domLayout: "autoHeight",
+      },
+      defaultColDef: {
+        resizable: true,
+        cellStyle: {
+          "font-size": "14px",
+          "font-family": "'Roboto'",
+        },
       },
       rowData: [],
       dialogVisible: false,
@@ -77,10 +82,6 @@ export default {
       this.$api.quiz.getQuizList().then((res) => {
         this.rowData = [...res?.data?.data];
       });
-    },
-    logout() {
-      localStorage.removeItem("token");
-      this.$router.push("/login");
     },
   },
   mounted() {

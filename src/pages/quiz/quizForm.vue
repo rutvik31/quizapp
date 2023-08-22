@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-dialog v-model="dialogVisible" scrollable persistent max-width="600px">
+    <v-dialog
+      v-model="dialogVisible"
+      scrollable
+      persistent
+      fullscreen
+      transition="dialog-bottom-transition"
+    >
       <v-card>
         <v-card-title class="px-4">
           <span class="text-h5">Add Quiz</span>
@@ -33,28 +39,15 @@
                   :rules="[requiredRule('Quiz description')]"
                 />
               </v-col>
-              <v-col cols="12">
-                <v-autocomplete
-                  v-model="quizObject.questions"
-                  :items="questionList"
-                  item-text="_id"
-                  item-value="_id"
-                  chips
-                  deletable-chips
-                  multiple
-                  small-chips
-                  return-object
-                  outlined
-                  dense
-                  clearable
-                  label="Select Questions"
-                  hide-details="auto"
-                  :rules="[
-                    (value) =>
-                      !!(value && value.length) ||
-                      'At least one question is required for a quiz to be created.',
-                  ]"
-                />
+              <v-col cols="12" class="py-0">
+                <div class="ag-theme-balham">
+                  <ag-grid-vue
+                    :gridOptions="gridOptions"
+                    :columnDefs="columnDefs"
+                    :defaultColDef="defaultColDef"
+                    :rowData="rowData"
+                  ></ag-grid-vue>
+                </div>
               </v-col>
             </v-row>
           </v-form>
@@ -75,19 +68,67 @@
   </div>
 </template>
 <script>
+import { AgGridVue } from "ag-grid-vue";
+import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
+
 export default {
   name: "QuizForm",
+  components: {
+    AgGridVue,
+    QuestionActionColumn,
+  },
   props: {
     value: Boolean,
   },
   data() {
     return {
+      columnDefs: [
+        {
+          headerName: "Question",
+          field: "question",
+          sortable: true,
+          checkboxSelection: true,
+        },
+        {
+          headerName: "Answer",
+          field: "answer",
+          cellRenderer: (params) => {
+            const answerIndex = params?.data?.answer;
+            const ansType = params?.data?.ansType;
+            const answerTypes = params?.data?.meta?.options;
+
+            return ansType === "single" &&
+              answerIndex !== undefined &&
+              answerIndex < answerTypes.length
+              ? answerTypes[answerIndex]
+              : ansType === "multiple" && answerIndex instanceof Array
+              ? answerIndex.map((index) => answerTypes[index]).join(", ")
+              : "";
+          },
+        },
+        { headerName: "AnsType", field: "ansType", sortable: true },
+        { headerName: "Difficulty", field: "difficulty", sortable: true },
+        { headerName: "Tags", cellRenderer: "QuestionActionColumn" },
+        { headerName: "Notes", field: "notes" },
+      ],
+      defaultColDef: {
+        resizable: true,
+        cellStyle: {
+          "font-size": "14px",
+          "font-family": "'Roboto'",
+        },
+      },
+      gridOptions: {
+        domLayout: "autoHeight",
+        rowSelection: "multiple",
+      },
       quizObject: {
         title: "",
         description: "",
         questions: [],
       },
       valid: false,
+      gridApi: null,
     };
   },
   computed: {
@@ -100,6 +141,9 @@ export default {
       },
     },
     questionList() {
+      return this.$store?.state?.questions?.questionsList?.data;
+    },
+    rowData() {
       return this.$store?.state?.questions?.questionsList?.data;
     },
   },

@@ -26,9 +26,14 @@
           dense
           outlined
           v-model="searchValue"
+          :clearable="true"
           label="Search for tag"
           hide-details="auto"
-        ></v-text-field>
+        >
+          <template v-slot:append>
+            <v-icon>mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
       </v-col>
       <v-col cols="12" class="pa-0">
         <v-card outlined>
@@ -37,6 +42,7 @@
               style="width: 100%; height: 100%"
               :gridOptions="gridOptions"
               :columnDefs="columnDefs"
+              :defaultColDef="defaultColDef"
               :context="gridContext"
               :rowData="rowData"
               @grid-size-changed="gridSizeChanged"
@@ -44,7 +50,7 @@
           </div>
         </v-card>
       </v-col>
-      <v-col cols="12" v-if="itemsPerPage > 10">
+      <v-col cols="12">
         <v-pagination
           v-model="currentPage"
           :length="totalPages"
@@ -76,9 +82,6 @@ export default {
     return {
       dialogVisible: false,
       gridApi: null,
-      gridOptions: {
-        domLayout: "autoHeight",
-      },
       columnDefs: [
         { headerName: "Name", field: "name" },
         { headerName: "Color", field: "color" },
@@ -89,6 +92,16 @@ export default {
           cellRenderer: "TagColumn",
         },
       ],
+      gridOptions: {
+        domLayout: "autoHeight",
+      },
+      defaultColDef: {
+        resizable: true,
+        cellStyle: {
+          "font-size": "14px",
+          "font-family": "'Roboto'",
+        },
+      },
       searchValue: "",
       debounceTimer: null,
       currentPage: 1,

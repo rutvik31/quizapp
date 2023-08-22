@@ -24,7 +24,7 @@
               <v-color-picker
                 v-model="color"
                 mode="hexa"
-                class="pa-0 py-4 max-width"
+                class="pa-0 py-4 max-width-tags"
                 label="Tag Color"
                 hide-details="auto"
               >
@@ -101,12 +101,13 @@ export default {
           this.closeDialog();
         })
         .catch((err) => {
-          console.log(err);
           this.$bus.$emit(
             "showSnakeBar",
             err?.response?.data?.message || "Some error occured",
             "error"
           );
+          this.resetForm();
+          this.closeDialog();
         });
     },
     requiredRule(fieldName) {
@@ -115,8 +116,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-.max-width {
-  max-width: none !important;
-}
-</style>
