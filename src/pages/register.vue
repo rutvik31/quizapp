@@ -68,6 +68,8 @@ export default {
         .createUserObject(user)
         .then((res) => {
           this.$bus.$emit("showSnakeBar", res?.data?.message, "success");
+          this.$router.push({ name: "login" });
+          this.$refs.form.reset();
         })
         .catch((err) => {
           this.$bus.$emit(
@@ -76,7 +78,6 @@ export default {
             "error"
           );
         });
-      this.$refs.form.reset();
     },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;

@@ -15,8 +15,11 @@
 
 <script>
 export default {
+  name: "Breadcrumbs",
   props: {
-    breadcrumbs: Array,
+    breadcrumbs: {
+      type: Array,
+    },
   },
 };
 </script>

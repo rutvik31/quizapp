@@ -9,7 +9,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-btn dark icon v-bind="attrs" v-on="on">
                 <v-icon
-                  @click="openDialog"
+                  @click="goToQuizForm"
                   color="#0277BD"
                   x-large
                   class="icon-margin-right"
@@ -21,6 +21,21 @@
           </v-menu>
         </div>
       </v-col>
+      <v-col cols="12" class="px-0">
+        <v-text-field
+          dense
+          outlined
+          v-model="queryFilters.searchValue"
+          :clearable="true"
+          label="Search for a question"
+          hide-details="auto"
+        >
+          <template v-slot:append>
+            <v-icon>mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
+      </v-col>
+
       <v-col cols="12" class="pa-0">
         <v-card outlined>
           <div class="ag-theme-balham">
@@ -35,20 +50,25 @@
           </div>
         </v-card>
       </v-col>
+      <v-col cols="12">
+        <v-pagination
+          v-model="queryFilters.currentPage"
+          :disabled="queryFilters.totalPages === 1"
+          :length="queryFilters.totalPages"
+          @input="getQuizList"
+        ></v-pagination>
+      </v-col>
     </v-row>
-    <QuizForm v-model="dialogVisible" />
   </v-container>
 </template>
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
-import QuizForm from "@/pages/quiz/quizForm.vue";
 
 export default {
   name: "Quizlist",
   components: {
     AgGridVue,
-    QuizForm,
   },
   data() {
     return {
@@ -67,20 +87,56 @@ export default {
           "font-family": "'Roboto'",
         },
       },
-      rowData: [],
-      dialogVisible: false,
+      queryFilters: {
+        searchValue: "",
+        currentPage: 1,
+        itemsPerPage: 10,
+        totalPages: 0,
+      },
+      debounceTimer: null,
     };
   },
+  watch: {
+    queryFilters: {
+      deep: true,
+      handler(newQuery) {
+        this.handleValueChange(newQuery);
+      },
+    },
+  },
+  computed: {
+    rowData() {
+      return this.$store?.state?.quiz?.quizList?.data;
+    },
+    queryParams() {
+      return {
+        search: this.queryFilters?.searchValue,
+        page: this.queryFilters?.currentPage,
+        perPage: this.queryFilters?.itemsPerPage,
+      };
+    },
+  },
   methods: {
-    openDialog() {
-      this.dialogVisible = true;
+    goToQuizForm() {
+      this.$router.push({ name: "admin-quizform" });
     },
     gridSizeChanged(grid) {
       grid?.api?.sizeColumnsToFit();
     },
+    handleValueChange(newQuery) {
+      if (this.queryFilters.searchValue !== newQuery) {
+        if (this.debounceTimer) {
+          clearTimeout(this.debounceTimer);
+        }
+        this.debounceTimer = setTimeout(() => {
+          this.getQuizList();
+        }, 1000);
+      }
+    },
     getQuizList() {
-      this.$api.quiz.getQuizList().then((res) => {
-        this.rowData = [...res?.data?.data];
+      this.$store.dispatch("quiz/getQuizList", this.queryParams).then(() => {
+        this.queryFilters.totalPages =
+          this.$store?.state?.quiz?.quizList?.pagination?.totalPages || 1;
       });
     },
   },

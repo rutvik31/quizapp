@@ -1,9 +1,11 @@
+login.vue
+
 <template>
   <v-container class="d-flex justify-center align-center loginContainer">
     <v-card width="400px">
       <v-card-title class="text-center">Login</v-card-title>
       <v-card-text>
-        <v-form v-model="valid" ref="form" @submit.prevent="login">
+        <v-form v-model="valid" @submit.prevent="login">
           <v-text-field
             v-model="user.email"
             label="Email"
@@ -49,7 +51,6 @@ export default {
       try {
         await this.$store.dispatch("auth/login", this.user);
         this.$router.push({ name: "admin-dashboard" });
-        this.$refs.form.reset();
       } catch (err) {
         this.$bus.$emit("showSnakeBar", err?.response?.data?.message, "error");
       }

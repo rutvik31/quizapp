@@ -24,58 +24,7 @@
           </v-menu>
         </div>
       </v-col>
-      <v-col cols="4" class="px-0">
-        <v-text-field
-          dense
-          outlined
-          v-model="searchValue"
-          :clearable="true"
-          label="Search for a question"
-          hide-details="auto"
-        >
-          <template v-slot:append>
-            <v-icon>mdi-magnify</v-icon>
-          </template>
-        </v-text-field>
-      </v-col>
-      <v-col cols="4" class="pr-0">
-        <v-select
-          ref="answer"
-          v-model="tagValue"
-          :items="tagList"
-          item-text="name"
-          item-value="name"
-          label="Filter by tags"
-          hide-details="auto"
-          multiple
-          outlined
-          dense
-        >
-          <template v-slot:append>
-            <v-icon>
-              {{ tagValue.length ? "mdi-filter" : "mdi-filter-outline" }}
-            </v-icon>
-          </template>
-        </v-select>
-      </v-col>
-      <v-col cols="4" class="pr-0">
-        <v-select
-          ref="answer"
-          v-model="diffValue"
-          :items="diffArray"
-          label="Filter by difficulty"
-          hide-details="auto"
-          multiple
-          outlined
-          dense
-        >
-          <template v-slot:append>
-            <v-icon>
-              {{ diffValue.length ? "mdi-filter" : "mdi-filter-outline" }}
-            </v-icon>
-          </template>
-        </v-select>
-      </v-col>
+      <QuestionsListFilter @filter-changed="handleFilterChanged" />
       <v-col cols="12" class="pa-0">
         <v-card outlined>
           <div class="ag-theme-balham">
@@ -92,8 +41,9 @@
       </v-col>
       <v-col cols="12">
         <v-pagination
-          v-model="currentPage"
-          :length="totalPages"
+          v-model="pagination.currentPage"
+          :disabled="pagination.totalPages === 1"
+          :length="pagination.totalPages"
           @input="getQuestionsList"
         ></v-pagination>
       </v-col>
@@ -116,7 +66,7 @@ import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn
 import QuestionActionDeleteAndEdit from "@/components/grid-columns/QuestionActionDeleteAndEdit.vue";
 import QuestionForm from "@/pages/question/questionForm.vue";
 import BulkUpload from "./bulkUpload.vue";
-
+import QuestionsListFilter from "@/components/filters/QuestionsListFilter.vue";
 export default {
   name: "Question",
   components: {
@@ -124,6 +74,7 @@ export default {
     QuestionActionColumn,
     QuestionActionDeleteAndEdit,
     QuestionForm,
+    QuestionsListFilter,
     BulkUpload,
   },
   data() {
@@ -175,26 +126,15 @@ export default {
       uploadDialogVisible: false,
       gridApi: null,
       userData: null,
-      searchValue: "",
-      tagValue: "",
-      diffValue: "",
+      pagination: {
+        currentPage: 1,
+        itemsPerPage: 10,
+        totalPages: 0,
+      },
+      ansTypeArray: ["single", "multiple"],
       diffArray: ["easy", "medium", "hard"],
       debounceTimer: null,
-      currentPage: 1,
-      itemsPerPage: 10,
-      totalPages: 0,
     };
-  },
-  watch: {
-    searchValue(newQuery) {
-      this.handleValueChange(newQuery);
-    },
-    tagValue(newQuery) {
-      this.handleValueChange(newQuery);
-    },
-    diffValue(newQuery) {
-      this.handleValueChange(newQuery);
-    },
   },
   computed: {
     gridContext() {
@@ -220,36 +160,26 @@ export default {
     gridSizeChanged(grid) {
       grid?.api?.sizeColumnsToFit();
     },
-    handleValueChange(newQuery) {
-      if (this.searchValue || this.tagValue || this.diffValue === newQuery) {
-        if (this.debounceTimer) {
-          clearTimeout(this.debounceTimer);
-        }
-        this.debounceTimer = setTimeout(() => {
-          this.getQuestionsList();
-        }, 1000);
+    handleFilterChanged(filters) {
+      const keys = Object.keys(filters);
+      while (keys.length) {
+        const key = keys.pop();
+        if (!filters[key] || !filters[key]?.length) delete filters[key];
+        if (Array.isArray(filters[key])) filters[key] = filters[key].join(",");
       }
+      this.getQuestionsList(filters);
     },
-    getQuestionsList() {
-      const queryParams = {
-        search: this.searchValue,
-        tags: Array.isArray(this.tagValue)
-          ? this.tagValue.join(",")
-          : this.tagValue,
-        difficulty: Array.isArray(this.diffValue)
-          ? this.diffValue.join(",")
-          : this.diffValue,
-        page: this.currentPage,
-        perPage: this.itemsPerPage,
+    async getQuestionsList(params = {}) {
+      params = {
+        ...params,
+        ...this.pagination,
       };
 
-      this.$store
-        .dispatch("questions/getQuestionsList", queryParams)
-        .then(() => {
-          this.totalPages =
-            this.$store?.state?.questions?.questionsList?.pagination
-              ?.totalPages || 1;
-        });
+      this.$store.dispatch("questions/getQuestionsList", params).then(() => {
+        this.pagination.totalPages =
+          this.$store?.state?.questions?.questionsList?.pagination
+            ?.totalPages || 1;
+      });
     },
     editQuestion(id) {
       this.$api.question.getQuestionById(id).then((res) => {

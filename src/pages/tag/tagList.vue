@@ -53,6 +53,7 @@
       <v-col cols="12">
         <v-pagination
           v-model="currentPage"
+          :disabled="totalPages === 1"
           :length="totalPages"
           @input="getTag"
         ></v-pagination>

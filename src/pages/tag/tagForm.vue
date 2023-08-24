@@ -53,7 +53,9 @@
 export default {
   name: "TagForm",
   props: {
-    value: Boolean,
+    value: {
+      type: Boolean,
+    },
   },
   data() {
     return {

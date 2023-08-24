@@ -132,7 +132,10 @@
 export default {
   name: "QuestionForm",
   props: {
-    value: Boolean,
+    value: {
+      type: Boolean,
+      required: true,
+    },
     userData: Object,
   },
   data() {
@@ -210,8 +213,11 @@ export default {
     async saveQuestion() {
       const payload = await this.generateQuestionPayload();
       if (this.userData) {
-        this.$api.question
-          .updateQuestion(this.userData._id, payload)
+        this.$store
+          .dispatch("questions/updateQuestion", {
+            questionId: this.userData._id,
+            questionData: payload,
+          })
           .then(() => {
             this.$bus.$emit(
               "showSnakeBar",
@@ -226,8 +232,8 @@ export default {
             this.$bus.$emit("showSnakeBar", "Error updating question", "error");
           });
       } else {
-        this.$api.question
-          .createQuestionObject(payload)
+        this.$store
+          .dispatch("questions/saveQuestion", payload)
           .then(() => {
             this.$bus.$emit(
               "showSnakeBar",

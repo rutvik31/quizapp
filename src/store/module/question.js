@@ -20,6 +20,17 @@ const mutations = {
       pagination,
     };
   },
+  addQuestion(state, questionData) {
+    state.questionsList.data.push(questionData);
+  },
+  updateQuestion(state, updatedQuestionData) {
+    const index = state.questionsList.data.findIndex(
+      (question) => question._id === updatedQuestionData._id
+    );
+    if (index !== -1) {
+      state.questionsList.data.splice(index, 1, updatedQuestionData);
+    }
+  },
 };
 
 const actions = {
@@ -29,6 +40,16 @@ const actions = {
         data: res?.data?.data,
         pagination: res?.data?.pagination,
       });
+    });
+  },
+  async createQuestion(context, questionData) {
+    return api.question.createQuestionObject(questionData).then((res) => {
+      context.commit("addQuestion", res?.data?.data);
+    });
+  },
+  async updateQuestion(context, { questionId, questionData }) {
+    return api.question.updateQuestion(questionId, questionData).then((res) => {
+      context.commit("updateQuestion", res?.data?.data);
     });
   },
 };

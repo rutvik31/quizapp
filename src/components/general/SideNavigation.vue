@@ -1,28 +1,43 @@
 <template>
-  <v-navigation-drawer clipped v-model="drawer" app>
+  <v-navigation-drawer clipped v-model="drawer" app :mini-variant.sync="mini">
+    <v-list-item class="px-2">
+      <v-list-item-avatar size="38" color="indigo">
+        <v-icon dark> mdi-account-circle </v-icon>
+      </v-list-item-avatar>
+      <v-list-item-title>Admin</v-list-item-title>
+      <v-btn icon @click.stop="mini = !mini">
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
+    </v-list-item>
+    <v-divider></v-divider>
     <v-list>
-      <v-list-item-group>
-        <v-list-item
-          v-for="items in item"
-          :ripple="false"
-          exact-path
-          :key="items.name"
-          :to="items.path"
-        >
-          <v-list-item-icon>
-            <v-icon>{{ items.icon }}</v-icon>
-          </v-list-item-icon>
+      <v-list-item
+        v-for="items in item"
+        :ripple="false"
+        exact-path
+        :key="items.name"
+        :to="items.path"
+      >
+        <v-list-item-icon>
+          <v-icon>{{ items.icon }}</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
           {{ items.name }}
-        </v-list-item>
-      </v-list-item-group>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
     <template v-slot:append>
-      <v-list-item @click="logout">
-        <v-list-item-icon>
-          <v-icon>mdi-logout</v-icon>
-        </v-list-item-icon>
-        Logout
-      </v-list-item>
+      <v-tooltip right>
+        <template v-slot:activator="{ on, attrs }">
+          <v-list-item :ripple="false" v-bind="attrs" v-on="on" @click="logout">
+            <v-list-item-icon>
+              <v-icon>mdi-logout-variant</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content> Logout </v-list-item-content>
+          </v-list-item>
+        </template>
+        <span>Logout</span>
+      </v-tooltip>
     </template>
   </v-navigation-drawer>
 </template>
@@ -31,10 +46,13 @@
 export default {
   name: "SideNavigation",
   props: {
-    value: Boolean,
+    value: {
+      type: Boolean,
+    },
   },
   data() {
     return {
+      mini: true,
       item: [
         {
           name: "Dashboard",

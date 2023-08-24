@@ -22,7 +22,7 @@ import SideNavigation from "@/components/general/SideNavigation.vue";
 import Breadcrumb from "@/components/general/Breadcrumb.vue";
 
 export default {
-  name: "TheDashboardLayout",
+  name: "AdminLayout",
   components: {
     SideNavigation,
     Breadcrumb,

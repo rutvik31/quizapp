@@ -36,7 +36,10 @@ import * as XLSX from "xlsx";
 export default {
   name: "bulkUpload",
   props: {
-    value: Boolean,
+    value: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {

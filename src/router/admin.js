@@ -2,18 +2,18 @@ import Quizlist from "@/pages/quiz/quizList.vue";
 import QuizForm from "@/pages/quiz/quizForm.vue";
 import Tag from "@/pages/tag/tagList.vue";
 import QuestionList from "@/pages/question/questionsList.vue";
-import DashBoard from "@/components/base/DashBoard.vue";
-import DashboardLayout from "@/layouts/DashboardLayout.vue";
+import Dashboard from "@/components/base/Dashboard.vue";
+import AdminLayout from "@/layouts/AdminLayout.vue";
 
 const adminRoutes = [
   {
     path: "/admin",
-    component: DashboardLayout,
+    component: AdminLayout,
     children: [
       {
         path: "",
         name: "admin-dashboard",
-        component: DashBoard,
+        component: Dashboard,
         meta: { requiresAuth: true },
       },
       {
@@ -26,6 +26,7 @@ const adminRoutes = [
         path: "quizform",
         name: "admin-quizform",
         component: QuizForm,
+        meta: { requiresAuth: true },
       },
       {
         path: "tags",
@@ -43,4 +44,4 @@ const adminRoutes = [
   },
 ];
 
-export default adminRoutes
+export default adminRoutes;
