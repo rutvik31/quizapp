@@ -43,10 +43,8 @@
 </template>
 
 <script>
-import RoutesValidation from "@/mixins/routes.validation";
 export default {
   name: "Register",
-  mixins: [RoutesValidation],
   data() {
     return {
       user: {

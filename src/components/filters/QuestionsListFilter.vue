@@ -57,7 +57,7 @@
     <v-col cols="3" class="pr-0">
       <v-select
         ref="answer"
-        v-model="filters.answerType"
+        v-model="filters.ansType"
         :items="ansTypeArray"
         label="Filter by ans type"
         hide-details="auto"
@@ -67,9 +67,7 @@
       >
         <template v-slot:append>
           <v-icon>
-            {{
-              filters?.answerType?.length ? "mdi-filter" : "mdi-filter-outline"
-            }}
+            {{ filters?.ansType?.length ? "mdi-filter" : "mdi-filter-outline" }}
           </v-icon>
         </template>
       </v-select>
@@ -86,7 +84,7 @@ export default {
         search: "",
         tags: [],
         difficulty: [],
-        answerType: [],
+        ansType: [],
       },
       ansTypeArray: ["single", "multiple"],
       diffArray: ["easy", "medium", "hard"],

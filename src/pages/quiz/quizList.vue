@@ -1,9 +1,9 @@
 <template>
-  <v-container>
+  <div>
     <v-row class="ma-0">
       <v-col cols="12" class="px-0">
         <div class="d-flex align-center">
-          <div class="header-title text-h5">Add Quiz</div>
+          <div class="header-title text-h5">Quiz</div>
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">
@@ -25,7 +25,7 @@
         <v-text-field
           dense
           outlined
-          v-model="queryFilters.searchValue"
+          v-model="filters.search"
           :clearable="true"
           label="Search for a question"
           hide-details="auto"
@@ -52,21 +52,24 @@
       </v-col>
       <v-col cols="12">
         <v-pagination
-          v-model="queryFilters.currentPage"
-          :disabled="queryFilters.totalPages === 1"
-          :length="queryFilters.totalPages"
+          v-model="pagination.page"
+          :disabled="totalPages === 1"
+          :length="totalPages"
           @input="getQuizList"
         ></v-pagination>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
 
+// mixins
+import listMixin from "@/mixins/list.mixin";
 export default {
   name: "Quizlist",
+  mixins: [listMixin],
   components: {
     AgGridVue,
   },
@@ -76,7 +79,6 @@ export default {
         { headerName: "Title", field: "title" },
         { headerName: "Description", field: "description" },
       ],
-      gridApi: null,
       gridOptions: {
         domLayout: "autoHeight",
       },
@@ -87,33 +89,19 @@ export default {
           "font-family": "'Roboto'",
         },
       },
-      queryFilters: {
-        searchValue: "",
-        currentPage: 1,
-        itemsPerPage: 10,
-        totalPages: 0,
-      },
-      debounceTimer: null,
     };
   },
   watch: {
-    queryFilters: {
+    filters: {
       deep: true,
-      handler(newQuery) {
-        this.handleValueChange(newQuery);
+      handler(filter) {
+        this.handleValueChange(filter);
       },
     },
   },
   computed: {
     rowData() {
       return this.$store?.state?.quiz?.quizList?.data;
-    },
-    queryParams() {
-      return {
-        search: this.queryFilters?.searchValue,
-        page: this.queryFilters?.currentPage,
-        perPage: this.queryFilters?.itemsPerPage,
-      };
     },
   },
   methods: {
@@ -123,19 +111,21 @@ export default {
     gridSizeChanged(grid) {
       grid?.api?.sizeColumnsToFit();
     },
-    handleValueChange(newQuery) {
-      if (this.queryFilters.searchValue !== newQuery) {
-        if (this.debounceTimer) {
-          clearTimeout(this.debounceTimer);
-        }
-        this.debounceTimer = setTimeout(() => {
-          this.getQuizList();
-        }, 1000);
+    handleValueChange() {
+      if (this.debounceTimer) {
+        clearTimeout(this.debounceTimer);
       }
+      this.debounceTimer = setTimeout(() => {
+        this.getQuizList();
+      }, 800);
     },
     getQuizList() {
-      this.$store.dispatch("quiz/getQuizList", this.queryParams).then(() => {
-        this.queryFilters.totalPages =
+      const params = {
+        ...this.filters,
+        ...this.pagination,
+      };
+      this.$store.dispatch("quiz/getQuizList", params).then(() => {
+        this.totalPages =
           this.$store?.state?.quiz?.quizList?.pagination?.totalPages || 1;
       });
     },

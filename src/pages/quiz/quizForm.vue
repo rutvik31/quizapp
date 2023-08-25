@@ -1,170 +1,114 @@
 <template>
   <div>
-    <v-stepper v-model="e1">
-      <v-stepper-header>
-        <v-stepper-step :complete="e1 > 1" step="1">
-          Create Quiz
-        </v-stepper-step>
-        <v-divider></v-divider>
-        <v-stepper-step :complete="e1 > 2" step="2">
-          Add Questions
-        </v-stepper-step>
-      </v-stepper-header>
-      <v-stepper-items>
-        <v-stepper-content step="1">
-          <v-card flat>
-            <v-card-text class="px-0">
-              <v-form v-model="valid" ref="form">
-                <v-row class="ma-0">
-                  <v-col cols="12">
-                    <v-text-field
-                      v-model="quizObject.title"
-                      label="Quiz Title"
-                      outlined
-                      dense
-                      hide-details="auto"
-                      :rules="[requiredRule('Quiz name')]"
-                    />
-                  </v-col>
-                  <v-col cols="12">
-                    <v-textarea
-                      v-model="quizObject.description"
-                      label="Write an appropriate description for this quiz."
-                      hide-details="auto"
-                      counter
-                      maxlength="250"
-                      single-line
-                      outlined
-                      dense
-                      :rules="[requiredRule('Quiz description')]"
-                    />
-                  </v-col>
-                  <v-col cols="12">
-                    <v-select
-                      ref="answer"
-                      :items="tagList"
-                      item-text="name"
-                      item-value="name"
-                      label="Select tags to filter out questions type"
-                      hide-details="auto"
-                      multiple
-                      outlined
-                      dense
-                    >
-                    </v-select>
-                  </v-col>
-                </v-row>
-              </v-form>
-            </v-card-text>
-          </v-card>
-          <div class="d-flex align-end justify-end">
-            <v-btn
-              :disabled="!valid"
-              @click="e1 = 2"
-              color="primary"
-              class="rounded-0 px-0"
-            >
-              Next
-            </v-btn>
-          </div>
-        </v-stepper-content>
-        <v-stepper-content step="2">
-          <v-card flat>
-            <v-card-text class="px-0">
-              <v-form v-model="valid" ref="form">
-                <v-row class="ma-0">
-                  <v-col cols="12" class="pa-0">
-                    <div class="ag-theme-balham">
-                      <ag-grid-vue
-                        :gridOptions="gridOptions"
-                        :columnDefs="columnDefs"
-                        :defaultColDef="defaultColDef"
-                        :rowData="rowData"
-                        @selection-changed="onSelectionChanged"
-                        @grid-size-changed="gridSizeChanged"
-                      ></ag-grid-vue>
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-form>
-            </v-card-text>
-          </v-card>
-          <div class="d-flex align-end justify-end">
-            <v-btn @click="e1 = 1" color="primary" class="rounded-0">
-              Back
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              class="rounded-0"
-              @click="saveQuiz"
-              :disabled="!valid"
-            >
-              Save
-            </v-btn>
-          </div>
-        </v-stepper-content>
-      </v-stepper-items>
+    <v-stepper :elevation="2" v-model="e1" vertical>
+      <v-stepper-step step="1" :complete="e1 > 1"> Create Quiz </v-stepper-step>
+      <v-stepper-content step="1">
+        <v-card flat>
+          <v-card-text class="px-0">
+            <v-form v-model="valid" ref="form">
+              <v-row class="ma-0">
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="quizObject.title"
+                    label="Quiz Title"
+                    outlined
+                    dense
+                    hide-details="auto"
+                    :rules="[requiredRule('Quiz name')]"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <v-textarea
+                    v-model="quizObject.description"
+                    label="Write an appropriate description for this quiz."
+                    hide-details="auto"
+                    counter
+                    maxlength="250"
+                    single-line
+                    outlined
+                    dense
+                    :rules="[requiredRule('Quiz description')]"
+                  />
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-card-text>
+        </v-card>
+        <div class="d-flex align-end justify-end">
+          <v-btn
+            :disabled="!valid"
+            @click="e1 = 2"
+            color="primary"
+            class="rounded-0 px-0"
+          >
+            Next
+          </v-btn>
+        </div>
+      </v-stepper-content>
+      <v-stepper-step step="2" :complete="e1 > 2">
+        Add Questions
+      </v-stepper-step>
+
+      <v-stepper-content step="2">
+        <v-card flat>
+          <v-card-text class="px-0">
+            <v-form v-model="valid" ref="form">
+              <v-row class="ma-0">
+                <v-col cols="12" class="pa-0">
+                  <AgGridQuestions @rows-clicked="handleSelectionChanged" />
+                </v-col>
+                <v-col cols="12">
+                  <v-pagination
+                    v-model="pagination.page"
+                    :disabled="totalPages === 1"
+                    :length="totalPages"
+                    @input="getQuestionsList"
+                  ></v-pagination>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-card-text>
+        </v-card>
+        <div class="d-flex align-end justify-end">
+          <v-btn @click="e1 = 1" color="primary" class="rounded-0">
+            Back
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            :disabled="!valid"
+            color="primary"
+            class="rounded-0"
+            @click="saveQuiz"
+          >
+            Save
+          </v-btn>
+        </div>
+      </v-stepper-content>
     </v-stepper>
   </div>
 </template>
 <script>
-import { AgGridVue } from "ag-grid-vue";
 import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
+import AgGridQuestions from "@/components/general/AgGridQuestions.vue";
 
 export default {
   name: "QuizForm",
   components: {
-    AgGridVue,
     QuestionActionColumn,
+    AgGridQuestions,
   },
   data() {
     return {
-      columnDefs: [
-        {
-          headerName: "Question",
-          field: "question",
-          sortable: true,
-          checkboxSelection: true,
-        },
-        {
-          headerName: "Answer",
-          field: "answer",
-          cellRenderer: (params) => {
-            const answerIndex = params?.data?.answer;
-            const ansType = params?.data?.ansType;
-            const answerTypes = params?.data?.meta?.options;
-
-            return ansType === "single" &&
-              answerIndex !== undefined &&
-              answerIndex < answerTypes.length
-              ? answerTypes[answerIndex]
-              : ansType === "multiple" && answerIndex instanceof Array
-              ? answerIndex.map((index) => answerTypes[index]).join(", ")
-              : "";
-          },
-        },
-        { headerName: "AnsType", field: "ansType", sortable: true },
-        { headerName: "Difficulty", field: "difficulty", sortable: true },
-        { headerName: "Tags", cellRenderer: "QuestionActionColumn" },
-        { headerName: "Notes", field: "notes" },
-      ],
-      defaultColDef: {
-        resizable: true,
-        cellStyle: {
-          "font-size": "14px",
-          "font-family": "'Roboto'",
-        },
-      },
-      gridOptions: {
-        domLayout: "autoHeight",
-        rowSelection: "multiple",
-      },
       quizObject: {
         title: "",
         description: "",
         questions: [],
       },
+      pagination: {
+        page: 1,
+        perPage: 10,
+      },
+      totalPages: 0,
       valid: false,
       gridApi: null,
       fetchQuestionIds: "",
@@ -175,18 +119,11 @@ export default {
     tagList() {
       return this.$store?.state?.tags?.tagsList?.data;
     },
-    rowData() {
-      return this.$store?.state?.questions?.questionsList?.data;
-    },
   },
   methods: {
-    onSelectionChanged(grid) {
-      const selectedRows = grid?.api?.getSelectedRows();
-      this.fetchQuestionIds = selectedRows.map((id) => id._id);
-    },
-    gridSizeChanged(grid) {
-      if (!this.gridApi) return;
-      grid?.api?.sizeColumnsToFit();
+    handleSelectionChanged(value) {
+      this.fetchQuestionIds = value;
+      console.log(this.fetchQuestionIds);
     },
     resetForm() {
       this.$refs.form.resetValidation();
@@ -216,12 +153,22 @@ export default {
           this.resetForm();
         });
     },
+    async getQuestionsList(params = {}) {
+      params = {
+        ...this.pagination,
+      };
+      this.$store.dispatch("questions/getQuestionsList", params).then(() => {
+        this.totalPages =
+          this.$store?.state?.questions?.questionsList?.pagination
+            ?.totalPages || 1;
+      });
+    },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;
     },
   },
   mounted() {
-    this.$store.dispatch("questions/getQuestionsList");
+    this.getQuestionsList();
     this.$store.dispatch("tags/getTagsList");
   },
 };

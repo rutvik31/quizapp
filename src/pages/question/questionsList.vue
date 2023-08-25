@@ -1,9 +1,9 @@
 <template>
-  <v-container>
+  <div>
     <v-row class="ma-0">
       <v-col cols="12" class="px-0">
         <div class="d-flex align-center">
-          <div class="header-title text-h5">Add Question</div>
+          <div class="header-title text-h5">Questions</div>
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">
@@ -27,23 +27,14 @@
       <QuestionsListFilter @filter-changed="handleFilterChanged" />
       <v-col cols="12" class="pa-0">
         <v-card outlined>
-          <div class="ag-theme-balham">
-            <ag-grid-vue
-              :gridOptions="gridOptions"
-              :columnDefs="columnDefs"
-              :defaultColDef="defaultColDef"
-              :rowData="rowData"
-              :context="gridContext"
-              @grid-size-changed="gridSizeChanged"
-            ></ag-grid-vue>
-          </div>
+          <AgGridQuestions :grid-context="gridContext" />
         </v-card>
       </v-col>
       <v-col cols="12">
         <v-pagination
-          v-model="pagination.currentPage"
-          :disabled="pagination.totalPages === 1"
-          :length="pagination.totalPages"
+          v-model="pagination.page"
+          :disabled="totalPages === 1"
+          :length="totalPages"
           @input="getQuestionsList"
         ></v-pagination>
       </v-col>
@@ -57,83 +48,36 @@
       v-model="uploadDialogVisible"
       @upload-success="getQuestionsList"
     />
-  </v-container>
+  </div>
 </template>
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
-import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
-import QuestionActionDeleteAndEdit from "@/components/grid-columns/QuestionActionDeleteAndEdit.vue";
 import QuestionForm from "@/pages/question/questionForm.vue";
 import BulkUpload from "./bulkUpload.vue";
 import QuestionsListFilter from "@/components/filters/QuestionsListFilter.vue";
+import AgGridQuestions from "@/components/general/AgGridQuestions.vue";
+
+// mixins
+import listMixin from "@/mixins/list.mixin";
 export default {
   name: "Question",
+  mixins: [listMixin],
   components: {
     AgGridVue,
-    QuestionActionColumn,
-    QuestionActionDeleteAndEdit,
     QuestionForm,
     QuestionsListFilter,
     BulkUpload,
+    AgGridQuestions,
   },
   data() {
     return {
-      columnDefs: [
-        {
-          headerName: "Question",
-          field: "question",
-          sortable: true,
-        },
-        {
-          headerName: "Answer",
-          field: "answer",
-          cellRenderer: (params) => {
-            const answerIndex = params?.data?.answer;
-            const ansType = params?.data?.ansType;
-            const answerTypes = params?.data?.meta?.options;
-
-            return ansType === "single" &&
-              answerIndex !== undefined &&
-              answerIndex < answerTypes.length
-              ? answerTypes[answerIndex]
-              : ansType === "multiple" && answerIndex instanceof Array
-              ? answerIndex.map((index) => answerTypes[index]).join(", ")
-              : "";
-          },
-        },
-        { headerName: "AnsType", field: "ansType", sortable: true },
-        { headerName: "Difficulty", field: "difficulty", sortable: true },
-        { headerName: "Tags", cellRenderer: "QuestionActionColumn" },
-        { headerName: "Notes", field: "notes" },
-        {
-          headerName: "Actions",
-          cellRenderer: "QuestionActionDeleteAndEdit",
-          width: 100,
-        },
-      ],
-      defaultColDef: {
-        resizable: true,
-        cellStyle: {
-          "font-size": "14px",
-          "font-family": "'Roboto'",
-        },
-      },
-      gridOptions: {
-        domLayout: "autoHeight",
-      },
       dialogVisible: false,
       uploadDialogVisible: false,
-      gridApi: null,
       userData: null,
-      pagination: {
-        currentPage: 1,
-        itemsPerPage: 10,
-        totalPages: 0,
-      },
       ansTypeArray: ["single", "multiple"],
       diffArray: ["easy", "medium", "hard"],
-      debounceTimer: null,
+     
     };
   },
   computed: {
@@ -157,9 +101,6 @@ export default {
     openUploadDialog() {
       this.uploadDialogVisible = true;
     },
-    gridSizeChanged(grid) {
-      grid?.api?.sizeColumnsToFit();
-    },
     handleFilterChanged(filters) {
       const keys = Object.keys(filters);
       while (keys.length) {
@@ -176,7 +117,7 @@ export default {
       };
 
       this.$store.dispatch("questions/getQuestionsList", params).then(() => {
-        this.pagination.totalPages =
+        this.totalPages =
           this.$store?.state?.questions?.questionsList?.pagination
             ?.totalPages || 1;
       });

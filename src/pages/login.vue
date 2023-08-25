@@ -33,10 +33,8 @@ login.vue
 </template>
 
 <script>
-import RoutesValidation from "@/mixins/routes.validation";
 export default {
   name: "Login",
-  mixins: [RoutesValidation],
   data() {
     return {
       user: {
@@ -50,10 +48,17 @@ export default {
     async login() {
       try {
         await this.$store.dispatch("auth/login", this.user);
-        this.$router.push({ name: "admin-dashboard" });
+        this.getUserDetails();
       } catch (err) {
         this.$bus.$emit("showSnakeBar", err?.response?.data?.message, "error");
       }
+    },
+    getUserDetails() {
+      this.$api.users.getUserDetails().then((res) => {
+        localStorage.setItem("userDeatils", res?.data?.data);
+        // redirect conditionaly
+        // this.$router.push({ name: "Quiz" });
+      });
     },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;
@@ -71,6 +76,12 @@ export default {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     },
+  },
+  beforeCreate() {
+    let token = localStorage.getItem("token");
+    if (token) {
+      this.getUserDetails();
+    }
   },
 };
 </script>
