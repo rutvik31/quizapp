@@ -23,7 +23,6 @@ export default {
   name: "AdminLayout",
   components: {
     SideNavigation,
-    Breadcrumb,
   },
   data() {
     return {
