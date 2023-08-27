@@ -43,7 +43,9 @@
 </template>
 
 <script>
+import AuthMixin from "@/mixins/auth.mixin";
 export default {
+  mixins: [AuthMixin],
   name: "Register",
   data() {
     return {
@@ -93,6 +95,12 @@ export default {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     },
+  },
+  beforeMount() {
+    let token = localStorage.getItem("token");
+    if (token) {
+      this.getUserDetails();
+    }
   },
 };
 </script>

@@ -77,7 +77,7 @@
 
 <script>
 export default {
-  name: "Question",
+  name: "QuestionFilter",
   data() {
     return {
       filters: {

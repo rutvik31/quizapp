@@ -70,7 +70,6 @@ import TagColumn from "@/components/grid-columns/TagActionColumn.vue";
 import TagForm from "@/pages/tag/tagForm.vue";
 // mixins
 import listMixin from "@/mixins/list.mixin";
-
 export default {
   name: "TagList",
   mixins: [listMixin],

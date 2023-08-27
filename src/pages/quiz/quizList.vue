@@ -64,7 +64,6 @@
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
-
 // mixins
 import listMixin from "@/mixins/list.mixin";
 export default {

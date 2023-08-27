@@ -13,6 +13,7 @@
 </template>
 <script>
 import { AgGridVue } from "ag-grid-vue";
+//Components
 import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
 import QuestionActionDeleteAndEdit from "@/components/grid-columns/QuestionActionDeleteAndEdit.vue";
 

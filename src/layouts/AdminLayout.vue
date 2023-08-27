@@ -10,7 +10,6 @@
     <v-main>
       <SideNavigation v-model="drawer" />
       <div class="app-content">
-        <!-- <Breadcrumb :breadcrumbs="$route.meta.breadcrumbs" /> -->
         <router-view></router-view>
       </div>
     </v-main>
@@ -19,7 +18,6 @@
 
 <script>
 import SideNavigation from "@/components/general/SideNavigation.vue";
-import Breadcrumb from "@/components/general/Breadcrumb.vue";
 
 export default {
   name: "AdminLayout",
@@ -31,12 +29,6 @@ export default {
     return {
       drawer: null,
     };
-  },
-  methods: {
-    logout() {
-      localStorage.removeItem("token");
-      this.$router.push("/login");
-    },
   },
 };
 </script>

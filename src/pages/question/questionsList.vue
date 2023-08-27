@@ -53,15 +53,15 @@
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
+//Components
 import QuestionForm from "@/pages/question/questionForm.vue";
 import BulkUpload from "./bulkUpload.vue";
 import QuestionsListFilter from "@/components/filters/QuestionsListFilter.vue";
 import AgGridQuestions from "@/components/general/AgGridQuestions.vue";
-
-// mixins
+//Mixins
 import listMixin from "@/mixins/list.mixin";
 export default {
-  name: "Question",
+  name: "QuestionList",
   mixins: [listMixin],
   components: {
     AgGridVue,
@@ -77,7 +77,6 @@ export default {
       userData: null,
       ansTypeArray: ["single", "multiple"],
       diffArray: ["easy", "medium", "hard"],
-     
     };
   },
   computed: {

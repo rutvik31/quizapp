@@ -90,7 +90,6 @@
 <script>
 import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
 import AgGridQuestions from "@/components/general/AgGridQuestions.vue";
-
 export default {
   name: "QuizForm",
   components: {

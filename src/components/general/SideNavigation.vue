@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     logout() {
-      localStorage.removeItem("token");
+      localStorage.clear();
       this.$router.push("/login");
     },
   },

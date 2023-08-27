@@ -33,7 +33,9 @@ login.vue
 </template>
 
 <script>
+import AuthMixin from "@/mixins/auth.mixin";
 export default {
+  mixins: [AuthMixin],
   name: "Login",
   data() {
     return {
@@ -53,13 +55,6 @@ export default {
         this.$bus.$emit("showSnakeBar", err?.response?.data?.message, "error");
       }
     },
-    getUserDetails() {
-      this.$api.users.getUserDetails().then((res) => {
-        localStorage.setItem("userDeatils", res?.data?.data);
-        // redirect conditionaly
-        // this.$router.push({ name: "Quiz" });
-      });
-    },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;
     },
@@ -77,7 +72,7 @@ export default {
       return emailRegex.test(email);
     },
   },
-  beforeCreate() {
+  beforeMount() {
     let token = localStorage.getItem("token");
     if (token) {
       this.getUserDetails();
