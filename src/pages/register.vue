@@ -43,10 +43,10 @@
 </template>
 
 <script>
-import RoutesValidation from "@/mixins/routes.validation";
+import AuthMixin from "@/mixins/auth.mixin";
 export default {
+  mixins: [AuthMixin],
   name: "Register",
-  mixins: [RoutesValidation],
   data() {
     return {
       user: {
@@ -68,6 +68,8 @@ export default {
         .createUserObject(user)
         .then((res) => {
           this.$bus.$emit("showSnakeBar", res?.data?.message, "success");
+          this.$router.push({ name: "login" });
+          this.$refs.form.reset();
         })
         .catch((err) => {
           this.$bus.$emit(
@@ -76,7 +78,6 @@ export default {
             "error"
           );
         });
-      this.$refs.form.reset();
     },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;
@@ -95,10 +96,11 @@ export default {
       return emailRegex.test(email);
     },
   },
+  beforeMount() {
+    let token = localStorage.getItem("token");
+    if (token) {
+      this.getUserDetails();
+    }
+  },
 };
 </script>
-<style scoped>
-.registerContainer {
-  height: 100%;
-}
-</style>

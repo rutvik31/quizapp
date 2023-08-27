@@ -1,5 +1,6 @@
 export const REGISTER = "/register";
 export const LOGIN = "/login";
+export const USER_DETAILS = "/user-deatils";
 
 // For Tags
 export const CREATE_TAG = "/create-tag";

@@ -1,9 +1,9 @@
 <template>
-  <v-container>
+  <div>
     <v-row class="ma-0">
       <v-col cols="12" class="px-0">
         <div class="d-flex align-center">
-          <div class="header-title text-h5">Add Tag</div>
+          <div class="header-title text-h5">Tags</div>
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">
@@ -25,28 +25,32 @@
         <v-text-field
           dense
           outlined
-          v-model="searchValue"
+          v-model="filters.search"
+          :clearable="true"
           label="Search for tag"
           hide-details="auto"
-        ></v-text-field>
+        >
+          <template v-slot:append>
+            <v-icon>mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
       </v-col>
-      <v-col cols="12" class="pa-0">
-        <v-card outlined>
-          <div class="ag-theme-balham">
-            <ag-grid-vue
-              style="width: 100%; height: 100%"
-              :gridOptions="gridOptions"
-              :columnDefs="columnDefs"
-              :context="gridContext"
-              :rowData="rowData"
-              @grid-size-changed="gridSizeChanged"
-            ></ag-grid-vue>
-          </div>
-        </v-card>
+      <v-col cols="12" class="px-0">
+        <ag-grid-vue
+          class="ag-theme-balham"
+          style="width: 100%; height: 100%"
+          :gridOptions="gridOptions"
+          :columnDefs="columnDefs"
+          :defaultColDef="defaultColDef"
+          :context="gridContext"
+          :rowData="rowData"
+          @grid-size-changed="gridSizeChanged"
+        ></ag-grid-vue>
       </v-col>
-      <v-col cols="12" v-if="itemsPerPage > 10">
+      <v-col cols="12">
         <v-pagination
-          v-model="currentPage"
+          v-model="pagination.page"
+          :disabled="totalPages === 1"
           :length="totalPages"
           @input="getTag"
         ></v-pagination>
@@ -57,15 +61,18 @@
       v-model="dialogVisible"
       @form-submitted="getTag"
     />
-  </v-container>
+  </div>
 </template>
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
 import TagColumn from "@/components/grid-columns/TagActionColumn.vue";
 import TagForm from "@/pages/tag/tagForm.vue";
-
+// mixins
+import listMixin from "@/mixins/list.mixin";
 export default {
+  name: "TagList",
+  mixins: [listMixin],
   components: {
     AgGridVue,
     TagColumn,
@@ -75,10 +82,6 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      gridApi: null,
-      gridOptions: {
-        domLayout: "autoHeight",
-      },
       columnDefs: [
         { headerName: "Name", field: "name" },
         { headerName: "Color", field: "color" },
@@ -89,16 +92,24 @@ export default {
           cellRenderer: "TagColumn",
         },
       ],
-      searchValue: "",
-      debounceTimer: null,
-      currentPage: 1,
-      itemsPerPage: 10,
-      totalPages: 0,
+      gridOptions: {
+        domLayout: "autoHeight",
+      },
+      defaultColDef: {
+        resizable: true,
+        cellStyle: {
+          "font-size": "14px",
+          "font-family": "'Roboto'",
+        },
+      },
     };
   },
   watch: {
-    searchValue(newQuery) {
-      this.handleValueChange(newQuery);
+    filters: {
+      deep: true,
+      handler(filter) {
+        this.handleValueChange(filter);
+      },
     },
   },
   computed: {
@@ -123,23 +134,20 @@ export default {
       this.name = "";
       this.color = "#1976D2";
     },
-    handleValueChange(newQuery) {
-      if (this.searchValue === newQuery) {
-        if (this.debounceTimer) {
-          clearTimeout(this.debounceTimer);
-        }
-        this.debounceTimer = setTimeout(() => {
-          this.getTag();
-        }, 1000);
+    handleValueChange() {
+      if (this.debounceTimer) {
+        clearTimeout(this.debounceTimer);
       }
+      this.debounceTimer = setTimeout(() => {
+        this.getTag();
+      }, 800);
     },
     getTag() {
-      const queryParams = {
-        search: this.searchValue,
-        page: this.currentPage,
-        perPage: this.itemsPerPage,
+      const params = {
+        ...this.filters,
+        ...this.pagination,
       };
-      this.$store.dispatch("tags/getTagsList", queryParams).then(() => {
+      this.$store.dispatch("tags/getTagsList", params).then(() => {
         this.totalPages =
           this.$store?.state?.tags?.tagsList?.pagination?.totalPages || 1;
       });

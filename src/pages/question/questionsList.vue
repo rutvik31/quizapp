@@ -1,9 +1,9 @@
 <template>
-  <v-container>
+  <div>
     <v-row class="ma-0">
       <v-col cols="12" class="px-0">
         <div class="d-flex align-center">
-          <div class="header-title text-h5">Add Question</div>
+          <div class="header-title text-h5">Questions</div>
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">
@@ -24,58 +24,16 @@
           </v-menu>
         </div>
       </v-col>
-      <v-col cols="4" class="px-0">
-        <v-text-field
-          dense
-          outlined
-          v-model="searchValue"
-          label="Search for a question"
-          hide-details="auto"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="4" class="pr-0">
-        <v-select
-          ref="answer"
-          v-model="tagValue"
-          :items="tagList"
-          item-text="name"
-          item-value="name"
-          label="Filter by tags"
-          hide-details="auto"
-          multiple
-          outlined
-          dense
-        />
-      </v-col>
-      <v-col cols="4" class="pr-0">
-        <v-select
-          ref="answer"
-          v-model="diffValue"
-          :items="diffArray"
-          label="Filter by difficulty"
-          hide-details="auto"
-          multiple
-          outlined
-          dense
-        />
-      </v-col>
+      <QuestionsListFilter @filter-changed="handleFilterChanged" />
       <v-col cols="12" class="pa-0">
         <v-card outlined>
-          <div class="ag-theme-balham">
-            <ag-grid-vue
-              style="width: 100%; height: 100%"
-              :gridOptions="gridOptions"
-              :columnDefs="columnDefs"
-              :rowData="rowData"
-              :context="gridContext"
-              @grid-size-changed="gridSizeChanged"
-            ></ag-grid-vue>
-          </div>
+          <AgGridQuestions :grid-context="gridContext" />
         </v-card>
       </v-col>
-      <v-col cols="12" v-if="itemsPerPage > 10">
+      <v-col cols="12">
         <v-pagination
-          v-model="currentPage"
+          v-model="pagination.page"
+          :disabled="totalPages === 1"
           :length="totalPages"
           @input="getQuestionsList"
         ></v-pagination>
@@ -90,88 +48,36 @@
       v-model="uploadDialogVisible"
       @upload-success="getQuestionsList"
     />
-  </v-container>
+  </div>
 </template>
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
-import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
-import QuestionActionDeleteAndEdit from "@/components/grid-columns/QuestionActionDeleteAndEdit.vue";
+//Components
 import QuestionForm from "@/pages/question/questionForm.vue";
 import BulkUpload from "./bulkUpload.vue";
-
+import QuestionsListFilter from "@/components/filters/QuestionsListFilter.vue";
+import AgGridQuestions from "@/components/general/AgGridQuestions.vue";
+//Mixins
+import listMixin from "@/mixins/list.mixin";
 export default {
-  name: "Question",
+  name: "QuestionList",
+  mixins: [listMixin],
   components: {
     AgGridVue,
-    QuestionActionColumn,
-    QuestionActionDeleteAndEdit,
     QuestionForm,
+    QuestionsListFilter,
     BulkUpload,
+    AgGridQuestions,
   },
   data() {
     return {
-      columnDefs: [
-        { headerName: "Question", field: "question", resizable: true },
-        {
-          headerName: "Answer",
-          field: "answer",
-          cellRenderer: (params) => {
-            const answerIndex = params?.data?.answer;
-            const ansType = params?.data?.ansType;
-            const answerTypes = params?.data?.meta?.options;
-
-            return ansType === "single" &&
-              answerIndex !== undefined &&
-              answerIndex < answerTypes.length
-              ? answerTypes[answerIndex]
-              : ansType === "multiple" && answerIndex instanceof Array
-              ? answerIndex.map((index) => answerTypes[index]).join(", ")
-              : "";
-          },
-        },
-        { headerName: "AnsType", field: "ansType" },
-        { headerName: "Difficulty", field: "difficulty" },
-        {
-          headerName: "Tags",
-          cellRenderer: "QuestionActionColumn",
-          resizable: true,
-        },
-        { headerName: "Notes", field: "notes", resizable: true },
-        {
-          headerName: "Actions",
-          cellRenderer: "QuestionActionDeleteAndEdit",
-          width: 100,
-          sortable: false,
-        },
-      ],
       dialogVisible: false,
       uploadDialogVisible: false,
-      gridApi: null,
-      gridOptions: {
-        domLayout: "autoHeight",
-      },
       userData: null,
-      searchValue: "",
-      tagValue: "",
-      diffValue: "",
+      ansTypeArray: ["single", "multiple"],
       diffArray: ["easy", "medium", "hard"],
-      debounceTimer: null,
-      currentPage: 1,
-      itemsPerPage: 10,
-      totalPages: 0,
     };
-  },
-  watch: {
-    searchValue(newQuery) {
-      this.handleValueChange(newQuery);
-    },
-    tagValue(newQuery) {
-      this.handleValueChange(newQuery);
-    },
-    diffValue(newQuery) {
-      this.handleValueChange(newQuery);
-    },
   },
   computed: {
     gridContext() {
@@ -194,39 +100,26 @@ export default {
     openUploadDialog() {
       this.uploadDialogVisible = true;
     },
-    gridSizeChanged(grid) {
-      grid?.api?.sizeColumnsToFit();
-    },
-    handleValueChange(newQuery) {
-      if (this.searchValue || this.tagValue || this.diffValue === newQuery) {
-        if (this.debounceTimer) {
-          clearTimeout(this.debounceTimer);
-        }
-        this.debounceTimer = setTimeout(() => {
-          this.getQuestionsList();
-        }, 1000);
+    handleFilterChanged(filters) {
+      const keys = Object.keys(filters);
+      while (keys.length) {
+        const key = keys.pop();
+        if (!filters[key] || !filters[key]?.length) delete filters[key];
+        if (Array.isArray(filters[key])) filters[key] = filters[key].join(",");
       }
+      this.getQuestionsList(filters);
     },
-    getQuestionsList() {
-      const queryParams = {
-        search: this.searchValue,
-        tags: Array.isArray(this.tagValue)
-          ? this.tagValue.join(",")
-          : this.tagValue,
-        difficulty: Array.isArray(this.diffValue)
-          ? this.diffValue.join(",")
-          : this.diffValue,
-        page: this.currentPage,
-        perPage: this.itemsPerPage,
+    async getQuestionsList(params = {}) {
+      params = {
+        ...params,
+        ...this.pagination,
       };
 
-      this.$store
-        .dispatch("questions/getQuestionsList", queryParams)
-        .then(() => {
-          this.totalPages =
-            this.$store?.state?.questions?.questionsList?.pagination
-              ?.totalPages || 1;
-        });
+      this.$store.dispatch("questions/getQuestionsList", params).then(() => {
+        this.totalPages =
+          this.$store?.state?.questions?.questionsList?.pagination
+            ?.totalPages || 1;
+      });
     },
     editQuestion(id) {
       this.$api.question.getQuestionById(id).then((res) => {
@@ -242,12 +135,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.max-width {
-  max-width: none !important;
-}
-.icon-margin-right {
-  margin-right: 3px;
-}
-</style>

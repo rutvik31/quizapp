@@ -2,45 +2,30 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Register from "@/pages/register.vue";
 import Login from "@/pages/login.vue";
-import Quizlist from "@/pages/quiz/quizList.vue";
-import Tag from "@/pages/tag/tagList.vue";
-import QuestionList from "@/pages/question/questionsList.vue";
+import DefaultLayout from "@/layouts/DefaultLayout.vue";
+import adminRoutes from "@/router/admin";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    redirect: "/login",
+    component: DefaultLayout,
+    children: [
+      {
+        path: "login",
+        name: "login",
+        component: Login,
+      },
+      {
+        path: "register",
+        name: "register",
+        component: Register,
+      },
+      ...adminRoutes
+    ],
   },
-  {
-    path: "/register",
-    name: "register",
-    component: Register,
-  },
-  {
-    path: "/login",
-    name: "login",
-    component: Login,
-  },
-  {
-    path: "/quizlist",
-    name: "quizlist",
-    component: Quizlist,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/tags",
-    name: "tags",
-    component: Tag,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/questions",
-    name: "questions",
-    component: QuestionList,
-    meta: { requiresAuth: true },
-  },
+  
 ];
 
 const router = new VueRouter({
@@ -61,6 +46,20 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+});
+
+router.beforeEach((to, from, next) => {
+  const breadcrumbs = [];
+  breadcrumbs.push({ label: "Home", route: "/" });
+
+  const matchedRoutes = to.matched;
+  matchedRoutes.forEach((route) => {
+    if (route.name) {
+      breadcrumbs.push({ label: route.name, route: route.path });
+    }
+  });
+  to.meta.breadcrumbs = breadcrumbs;
+  next();
 });
 
 export default router;

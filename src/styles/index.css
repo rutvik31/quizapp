@@ -1,0 +1,50 @@
+/* App */
+.app-content {
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px;
+}
+
+/* Login Component */
+.loginContainer {
+  height: 100%;
+}
+
+/* Register Component */
+.registerContainer {
+  height: 100%;
+}
+
+/* To remove extra width from v-color-picker */
+.max-width-tags {
+  max-width: none !important;
+}
+
+/* For Icons in all pages */
+.icon-margin-right {
+  margin-right: 3px;
+}
+
+/* For Breadcrumbs styling */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: #888;
+}
+
+.breadcrumb-label {
+  color: #333;
+}
+
+.breadcrumb-label:hover {
+  text-decoration: underline;
+}

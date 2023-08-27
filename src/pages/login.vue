@@ -1,9 +1,11 @@
+login.vue
+
 <template>
   <v-container class="d-flex justify-center align-center loginContainer">
     <v-card width="400px">
       <v-card-title class="text-center">Login</v-card-title>
       <v-card-text>
-        <v-form v-model="valid" ref="form" @submit.prevent="login">
+        <v-form v-model="valid" @submit.prevent="login">
           <v-text-field
             v-model="user.email"
             label="Email"
@@ -31,10 +33,10 @@
 </template>
 
 <script>
-import RoutesValidation from "@/mixins/routes.validation";
+import AuthMixin from "@/mixins/auth.mixin";
 export default {
+  mixins: [AuthMixin],
   name: "Login",
-  mixins: [RoutesValidation],
   data() {
     return {
       user: {
@@ -48,8 +50,7 @@ export default {
     async login() {
       try {
         await this.$store.dispatch("auth/login", this.user);
-        this.$router.push("tags");
-        this.$refs.form.reset();
+        this.getUserDetails();
       } catch (err) {
         this.$bus.$emit("showSnakeBar", err?.response?.data?.message, "error");
       }
@@ -71,10 +72,11 @@ export default {
       return emailRegex.test(email);
     },
   },
+  beforeMount() {
+    let token = localStorage.getItem("token");
+    if (token) {
+      this.getUserDetails();
+    }
+  },
 };
 </script>
-<style scoped>
-.loginContainer {
-  height: 100%;
-}
-</style>
