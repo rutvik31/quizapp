@@ -4,6 +4,7 @@ import Register from "@/pages/register.vue";
 import Login from "@/pages/login.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import adminRoutes from "@/router/admin";
+import userRoutes from "@/router/user";
 
 Vue.use(VueRouter);
 
@@ -22,10 +23,10 @@ const routes = [
         name: "register",
         component: Register,
       },
-      ...adminRoutes
+      ...adminRoutes,
+      ...userRoutes,
     ],
   },
-  
 ];
 
 const router = new VueRouter({
@@ -41,25 +42,15 @@ router.beforeEach((to, from, next) => {
     if (!token) {
       next("/login");
     } else {
-      next();
+      const user = JSON.parse(localStorage.getItem("userDeatils"));
+      const type = user?.role;
+      const path = to.fullPath.split("/")[1];
+      if (path !== type) next(`${type}`);
+      else next();
     }
   } else {
     next();
   }
-});
-
-router.beforeEach((to, from, next) => {
-  const breadcrumbs = [];
-  breadcrumbs.push({ label: "Home", route: "/" });
-
-  const matchedRoutes = to.matched;
-  matchedRoutes.forEach((route) => {
-    if (route.name) {
-      breadcrumbs.push({ label: route.name, route: route.path });
-    }
-  });
-  to.meta.breadcrumbs = breadcrumbs;
-  next();
 });
 
 export default router;

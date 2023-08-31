@@ -7,10 +7,9 @@
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn dark icon v-bind="attrs" v-on="on">
-                <v-icon color="#0277BD" x-large class="icon-margin-right">
-                  mdi-plus-circle
-                </v-icon>
+              <v-btn color="primary" outlined v-bind="attrs" v-on="on">
+                Add
+                <v-icon right dark>mdi-plus-circle-outline</v-icon>
               </v-btn>
             </template>
             <v-list class="py-0">
@@ -27,7 +26,11 @@
       <QuestionsListFilter @filter-changed="handleFilterChanged" />
       <v-col cols="12" class="pa-0">
         <v-card outlined>
-          <AgGridQuestions :grid-context="gridContext" />
+          <AgGridList
+            :grid-context="gridContext"
+            :columnDefs="columnDefs"
+            :rowData="rowData"
+          />
         </v-card>
       </v-col>
       <v-col cols="12">
@@ -57,7 +60,9 @@ import { AgGridVue } from "ag-grid-vue";
 import QuestionForm from "@/pages/question/questionForm.vue";
 import BulkUpload from "./bulkUpload.vue";
 import QuestionsListFilter from "@/components/filters/QuestionsListFilter.vue";
-import AgGridQuestions from "@/components/general/AgGridQuestions.vue";
+import AgGridList from "@/components/general/AgGridList.vue";
+import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
+import QuestionActionDeleteAndEdit from "@/components/grid-columns/QuestionActionDeleteAndEdit.vue";
 //Mixins
 import listMixin from "@/mixins/list.mixin";
 export default {
@@ -68,10 +73,44 @@ export default {
     QuestionForm,
     QuestionsListFilter,
     BulkUpload,
-    AgGridQuestions,
+    AgGridList,
+    QuestionActionColumn,
+    QuestionActionDeleteAndEdit,
   },
   data() {
     return {
+      columnDefs: [
+        {
+          headerName: "Question",
+          field: "question",
+        },
+        {
+          headerName: "Answer",
+          field: "answer",
+          cellRenderer: (params) => {
+            const answerIndex = params?.data?.answer;
+            const ansType = params?.data?.ansType;
+            const answerTypes = params?.data?.meta?.options;
+
+            return ansType === "single" &&
+              answerIndex !== undefined &&
+              answerIndex < answerTypes.length
+              ? answerTypes[answerIndex]
+              : ansType === "multiple" && answerIndex instanceof Array
+              ? answerIndex.map((index) => answerTypes[index]).join(", ")
+              : "";
+          },
+        },
+        { headerName: "AnsType", field: "ansType", sortable: true },
+        { headerName: "Difficulty", field: "difficulty", sortable: true },
+        { headerName: "Tags", cellRenderer: "QuestionActionColumn" },
+        { headerName: "Notes", field: "notes" },
+        {
+          headerName: "Actions",
+          cellRenderer: "QuestionActionDeleteAndEdit",
+          width: 100,
+        },
+      ],
       dialogVisible: false,
       uploadDialogVisible: false,
       userData: null,

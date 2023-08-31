@@ -18,7 +18,7 @@ axiosInstance.interceptors.request.use(
     }
   },
   (error) => {
-    return error;
+    return Promise.reject(error);
   }
 );
 
@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
       localStorage.clear();
       window.location = "/login";
     }
-    return error;
+    return Promise.reject(error);
   }
 );
 

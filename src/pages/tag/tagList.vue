@@ -7,21 +7,21 @@
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn dark icon v-bind="attrs" v-on="on">
-                <v-icon
-                  color="#0277BD"
-                  x-large
-                  class="icon-margin-right"
-                  @click="openDialog"
-                >
-                  mdi-plus-circle
-                </v-icon>
+              <v-btn
+                color="primary"
+                outlined
+                v-bind="attrs"
+                v-on="on"
+                @click="openDialog"
+              >
+                Add
+                <v-icon right dark>mdi-plus-circle-outline</v-icon>
               </v-btn>
             </template>
           </v-menu>
         </div>
       </v-col>
-      <v-col cols="12" class="px-0">
+      <v-col cols="12" class="px-0 pb-0">
         <v-text-field
           dense
           outlined
@@ -36,16 +36,11 @@
         </v-text-field>
       </v-col>
       <v-col cols="12" class="px-0">
-        <ag-grid-vue
-          class="ag-theme-balham"
-          style="width: 100%; height: 100%"
-          :gridOptions="gridOptions"
+        <AgGridList
+          :grid-context="gridContext"
           :columnDefs="columnDefs"
-          :defaultColDef="defaultColDef"
-          :context="gridContext"
           :rowData="rowData"
-          @grid-size-changed="gridSizeChanged"
-        ></ag-grid-vue>
+        />
       </v-col>
       <v-col cols="12">
         <v-pagination
@@ -65,7 +60,7 @@
 </template>
 
 <script>
-import { AgGridVue } from "ag-grid-vue";
+import AgGridList from "@/components/general/AgGridList.vue";
 import TagColumn from "@/components/grid-columns/TagActionColumn.vue";
 import TagForm from "@/pages/tag/tagForm.vue";
 // mixins
@@ -74,9 +69,9 @@ export default {
   name: "TagList",
   mixins: [listMixin],
   components: {
-    AgGridVue,
     TagColumn,
     TagForm,
+    AgGridList,
   },
   name: "Tag",
   data() {

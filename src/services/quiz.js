@@ -1,4 +1,4 @@
-import { CREATE_QUIZ, GET_QUIZ } from "@/utils/constants";
+import { CREATE_QUIZ, GET_QUIZ, GET_QUIZ_OBJECT } from "@/utils/constants";
 
 export default (axios) => ({
   createQuizObject(payload) {
@@ -6,5 +6,8 @@ export default (axios) => ({
   },
   getQuizList(queryParams) {
     return axios.get(GET_QUIZ, { params: queryParams });
+  },
+  getQuizById(id) {
+    return axios.get(`${GET_QUIZ_OBJECT}/${id}`);
   },
 });

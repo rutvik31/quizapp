@@ -48,3 +48,19 @@
 .breadcrumb-label:hover {
   text-decoration: underline;
 }
+
+/* Options Style */
+.options-style {
+  background-color: #e7e9eb;
+  position: relative;
+  padding: 10px 0px 10px 10px;
+  margin-bottom: 2px !important;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+  word-wrap: break-word;
+}
+/* Questions text */
+.questions-text {
+  font-size: 18px;
+}

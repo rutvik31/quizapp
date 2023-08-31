@@ -19,7 +19,7 @@ login.vue
             type="password"
             :rules="[requiredRule('Password')]"
           ></v-text-field>
-          <v-btn :disabled="!valid" type="submit" color="primary" block>
+          <v-btn type="submit" :disabled="!valid" color="primary" block>
             Login
           </v-btn>
         </v-form>
@@ -48,12 +48,20 @@ export default {
   },
   methods: {
     async login() {
-      try {
-        await this.$store.dispatch("auth/login", this.user);
-        this.getUserDetails();
-      } catch (err) {
-        this.$bus.$emit("showSnakeBar", err?.response?.data?.message, "error");
-      }
+      this.$api.users
+        .login(this.user)
+        .then((res) => {
+          const token = res?.data?.token;
+          localStorage.setItem("token", token);
+          this.getUserDetails();
+        })
+        .catch((err) => {
+          this.$bus.$emit(
+            "showSnakeBar",
+            err?.response?.data?.message,
+            "error"
+          );
+        });
     },
     requiredRule(fieldName) {
       return (value) => !!value || `${fieldName} is required`;

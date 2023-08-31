@@ -55,7 +55,11 @@
             <v-form v-model="valid" ref="form">
               <v-row class="ma-0">
                 <v-col cols="12" class="pa-0">
-                  <AgGridQuestions @rows-clicked="handleSelectionChanged" />
+                  <AgGridList
+                    @rows-clicked="handleSelectionChanged"
+                    :columnDefs="columnDefs"
+                    :rowData="rowData"
+                  />
                 </v-col>
                 <v-col cols="12">
                   <v-pagination
@@ -89,15 +93,50 @@
 </template>
 <script>
 import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
-import AgGridQuestions from "@/components/general/AgGridQuestions.vue";
+import AgGridList from "@/components/general/AgGridList.vue";
 export default {
   name: "QuizForm",
   components: {
     QuestionActionColumn,
-    AgGridQuestions,
+    AgGridList,
   },
   data() {
     return {
+      columnDefs: [
+        {
+          headerName: "Question",
+          field: "question",
+          sortable: true,
+          checkboxSelection: true,
+        },
+        {
+          headerName: "Answer",
+          field: "answer",
+          cellRenderer: (params) => {
+            const answerIndex = params?.data?.answer;
+            const ansType = params?.data?.ansType;
+            const answerTypes = params?.data?.meta?.options;
+
+            return ansType === "single" &&
+              answerIndex !== undefined &&
+              answerIndex < answerTypes.length
+              ? answerTypes[answerIndex]
+              : ansType === "multiple" && answerIndex instanceof Array
+              ? answerIndex.map((index) => answerTypes[index]).join(", ")
+              : "";
+          },
+        },
+        { headerName: "AnsType", field: "ansType", sortable: true },
+        { headerName: "Difficulty", field: "difficulty", sortable: true },
+        { headerName: "Tags", cellRenderer: "QuestionActionColumn" },
+        { headerName: "Notes", field: "notes" },
+        {
+          headerName: "Actions",
+          cellRenderer: "QuestionActionDeleteAndEdit",
+          width: 100,
+          hide: true,
+        },
+      ],
       quizObject: {
         title: "",
         description: "",
@@ -118,11 +157,13 @@ export default {
     tagList() {
       return this.$store?.state?.tags?.tagsList?.data;
     },
+    rowData() {
+      return this.$store?.state?.questions?.questionsList?.data;
+    },
   },
   methods: {
     handleSelectionChanged(value) {
       this.fetchQuestionIds = value;
-      console.log(this.fetchQuestionIds);
     },
     resetForm() {
       this.$refs.form.resetValidation();

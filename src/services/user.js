@@ -4,7 +4,7 @@ export default (axios) => ({
   createUserObject(user) {
     return axios.post(REGISTER, user);
   },
-  getSingleUserObject(user) {
+  login(user) {
     return axios.post(LOGIN, user);
   },
   getUserDetails() {

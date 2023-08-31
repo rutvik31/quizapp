@@ -17,3 +17,4 @@ export const EDIT_QUESTION = "/update-question";
 // For Quiz
 export const CREATE_QUIZ = "/create-quiz";
 export const GET_QUIZ = "/get-quiz";
+export const GET_QUIZ_OBJECT = "/get-quiz";

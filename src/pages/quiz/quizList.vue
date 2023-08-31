@@ -7,15 +7,15 @@
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn dark icon v-bind="attrs" v-on="on">
-                <v-icon
-                  @click="goToQuizForm"
-                  color="#0277BD"
-                  x-large
-                  class="icon-margin-right"
-                >
-                  mdi-plus-circle
-                </v-icon>
+              <v-btn
+                color="primary"
+                outlined
+                v-bind="attrs"
+                v-on="on"
+                @click="goToQuizForm"
+              >
+                Add
+                <v-icon right dark>mdi-plus-circle-outline</v-icon>
               </v-btn>
             </template>
           </v-menu>
@@ -38,16 +38,7 @@
 
       <v-col cols="12" class="pa-0">
         <v-card outlined>
-          <div class="ag-theme-balham">
-            <ag-grid-vue
-              style="width: 100%; height: 100%"
-              :columnDefs="columnDefs"
-              :defaultColDef="defaultColDef"
-              :gridOptions="gridOptions"
-              :rowData="rowData"
-              @grid-size-changed="gridSizeChanged"
-            ></ag-grid-vue>
-          </div>
+          <AgGridList :columnDefs="columnDefs" :rowData="rowData"></AgGridList>
         </v-card>
       </v-col>
       <v-col cols="12">
@@ -63,14 +54,14 @@
 </template>
 
 <script>
-import { AgGridVue } from "ag-grid-vue";
+import AgGridList from "@/components/general/AgGridList.vue";
 // mixins
 import listMixin from "@/mixins/list.mixin";
 export default {
   name: "Quizlist",
   mixins: [listMixin],
   components: {
-    AgGridVue,
+    AgGridList,
   },
   data() {
     return {
@@ -78,16 +69,6 @@ export default {
         { headerName: "Title", field: "title" },
         { headerName: "Description", field: "description" },
       ],
-      gridOptions: {
-        domLayout: "autoHeight",
-      },
-      defaultColDef: {
-        resizable: true,
-        cellStyle: {
-          "font-size": "14px",
-          "font-family": "'Roboto'",
-        },
-      },
     };
   },
   watch: {
@@ -106,9 +87,6 @@ export default {
   methods: {
     goToQuizForm() {
       this.$router.push({ name: "admin-quizform" });
-    },
-    gridSizeChanged(grid) {
-      grid?.api?.sizeColumnsToFit();
     },
     handleValueChange() {
       if (this.debounceTimer) {
