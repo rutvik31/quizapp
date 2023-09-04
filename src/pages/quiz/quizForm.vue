@@ -57,6 +57,7 @@
                 <v-col cols="12" class="pa-0">
                   <AgGridList
                     @rows-clicked="handleSelectionChanged"
+                    :gridOptions="gridOptions"
                     :columnDefs="columnDefs"
                     :rowData="rowData"
                   />
@@ -94,7 +95,10 @@
 <script>
 import QuestionActionColumn from "@/components/grid-columns/QuestionActionColumn.vue";
 import AgGridList from "@/components/general/AgGridList.vue";
+// Mixins
+import listMixin from "@/mixins/list.mixin";
 export default {
+  mixins: [listMixin],
   name: "QuizForm",
   components: {
     QuestionActionColumn,
@@ -137,19 +141,18 @@ export default {
           hide: true,
         },
       ],
+      gridOptions: {
+        domLayout: "autoHeight",
+        rowSelection: "multiple",
+        rowMultiSelectWithClick: true,
+      },
       quizObject: {
         title: "",
         description: "",
         questions: [],
       },
-      pagination: {
-        page: 1,
-        perPage: 10,
-      },
-      totalPages: 0,
       valid: false,
-      gridApi: null,
-      fetchQuestionIds: "",
+      fetchQuestionIds: [],
       e1: 1,
     };
   },
@@ -168,7 +171,7 @@ export default {
     resetForm() {
       this.$refs.form.resetValidation();
     },
-    async generateQuizPayload() {
+    async generatePayload() {
       const quizPayload = {
         ...this.quizObject,
         questions: this.fetchQuestionIds,
@@ -176,7 +179,7 @@ export default {
       return quizPayload;
     },
     async saveQuiz() {
-      const payload = await this.generateQuizPayload();
+      const payload = await this.generatePayload();
       this.$store
         .dispatch("quiz/createQuiz", payload)
         .then(() => {

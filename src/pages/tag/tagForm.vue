@@ -81,14 +81,14 @@ export default {
     resetForm() {
       this.$refs.form.reset();
     },
-    async generateTagPayload() {
+    async generatePayload() {
       return {
         name: this.name,
         color: this.color,
       };
     },
     async saveTag() {
-      const payload = await this.generateTagPayload();
+      const payload = await this.generatePayload();
       this.$store
         .dispatch("tags/createTag", payload)
         .then(() => {

@@ -1,3 +1,4 @@
+// For User
 export const REGISTER = "/register";
 export const LOGIN = "/login";
 export const USER_DETAILS = "/user-deatils";

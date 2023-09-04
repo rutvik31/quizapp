@@ -21,7 +21,7 @@
           </v-menu>
         </div>
       </v-col>
-      <v-col cols="12" class="px-0 pb-0">
+      <v-col cols="12" class="px-0 pb-0 search-bar">
         <v-text-field
           dense
           outlined
@@ -39,6 +39,7 @@
         <AgGridList
           :grid-context="gridContext"
           :columnDefs="columnDefs"
+          :gridOptions="gridOptions"
           :rowData="rowData"
         />
       </v-col>
@@ -89,13 +90,6 @@ export default {
       ],
       gridOptions: {
         domLayout: "autoHeight",
-      },
-      defaultColDef: {
-        resizable: true,
-        cellStyle: {
-          "font-size": "14px",
-          "font-family": "'Roboto'",
-        },
       },
     };
   },

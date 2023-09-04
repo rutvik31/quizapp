@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer clipped v-model="drawer" app :mini-variant.sync="mini">
+  <v-navigation-drawer
+    elevate-on-scroll
+    clipped
+    v-model="drawer"
+    app
+    :mini-variant.sync="mini"
+  >
     <v-list-item class="px-2">
       <v-list-item-avatar size="38" color="indigo">
         <v-icon dark> mdi-account-circle </v-icon>

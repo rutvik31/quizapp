@@ -189,7 +189,7 @@ export default {
       };
       this.$refs.form.resetValidation();
     },
-    async generateQuestionPayload() {
+    async generatePayload() {
       let answerIndex = null;
 
       if (this.questionObject.ansType === "single") {
@@ -211,7 +211,7 @@ export default {
       return questionPayload;
     },
     async saveQuestion() {
-      const payload = await this.generateQuestionPayload();
+      const payload = await this.generatePayload();
       if (this.userData) {
         this.$store
           .dispatch("questions/updateQuestion", {

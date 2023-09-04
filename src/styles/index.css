@@ -25,30 +25,6 @@
   margin-right: 3px;
 }
 
-/* For Breadcrumbs styling */
-.breadcrumbs {
-  display: flex;
-  align-items: center;
-}
-
-.breadcrumb-item {
-  display: flex;
-  align-items: center;
-}
-
-.breadcrumb-separator {
-  margin: 0 8px;
-  color: #888;
-}
-
-.breadcrumb-label {
-  color: #333;
-}
-
-.breadcrumb-label:hover {
-  text-decoration: underline;
-}
-
 /* Options Style */
 .options-style {
   background-color: #e7e9eb;
@@ -63,4 +39,14 @@
 /* Questions text */
 .questions-text {
   font-size: 18px;
+}
+
+/* For search bar */
+.search-bar {
+  max-width: 320px !important;
+}
+
+/* For v-btn */
+.v-btn__content {
+  text-transform: capitalize;
 }

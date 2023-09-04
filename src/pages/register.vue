@@ -24,9 +24,11 @@
           ></v-text-field>
           <v-text-field
             v-model="user.password"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             label="Password"
             outlined
-            type="password"
+            @click:append="show1 = !show1"
+            :type="show1 ? 'text' : 'password'"
             :rules="[requiredRule('Password')]"
           ></v-text-field>
           <v-btn :disabled="!valid" type="submit" color="primary" block>
@@ -57,6 +59,7 @@ export default {
       },
       errors: {},
       valid: false,
+      show1: false,
     };
   },
   methods: {
@@ -65,7 +68,7 @@ export default {
         ...this.user,
       };
       this.$api.users
-        .createUserObject(user)
+        .register(user)
         .then((res) => {
           this.$bus.$emit("showSnakeBar", res?.data?.message, "success");
           this.$router.push({ name: "login" });

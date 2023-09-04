@@ -29,6 +29,7 @@
           <AgGridList
             :grid-context="gridContext"
             :columnDefs="columnDefs"
+            :gridOptions="gridOptions"
             :rowData="rowData"
           />
         </v-card>
@@ -111,6 +112,9 @@ export default {
           width: 100,
         },
       ],
+      gridOptions: {
+        domLayout: "autoHeight",
+      },
       dialogVisible: false,
       uploadDialogVisible: false,
       userData: null,

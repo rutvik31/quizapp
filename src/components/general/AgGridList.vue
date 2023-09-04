@@ -25,6 +25,9 @@ export default {
     columnDefs: {
       type: Array,
     },
+    gridOptions: {
+      type: Object,
+    },
     rowData: {
       type: Array,
     },
@@ -37,10 +40,6 @@ export default {
           "font-size": "14px",
           "font-family": "'Roboto'",
         },
-      },
-      gridOptions: {
-        domLayout: "autoHeight",
-        rowSelection: "multiple",
       },
       gridApi: null,
     };

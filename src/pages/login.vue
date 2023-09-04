@@ -1,5 +1,3 @@
-login.vue
-
 <template>
   <v-container class="d-flex justify-center align-center loginContainer">
     <v-card width="400px">
@@ -14,9 +12,11 @@ login.vue
           ></v-text-field>
           <v-text-field
             v-model="user.password"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             label="Password"
             outlined
-            type="password"
+            @click:append="show1 = !show1"
+            :type="show1 ? 'text' : 'password'"
             :rules="[requiredRule('Password')]"
           ></v-text-field>
           <v-btn type="submit" :disabled="!valid" color="primary" block>
@@ -44,6 +44,7 @@ export default {
         password: "",
       },
       valid: false,
+      show1: false,
     };
   },
   methods: {

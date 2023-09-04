@@ -21,7 +21,7 @@
           </v-menu>
         </div>
       </v-col>
-      <v-col cols="12" class="px-0">
+      <v-col cols="12" class="px-0 search-bar">
         <v-text-field
           dense
           outlined
@@ -38,7 +38,11 @@
 
       <v-col cols="12" class="pa-0">
         <v-card outlined>
-          <AgGridList :columnDefs="columnDefs" :rowData="rowData"></AgGridList>
+          <AgGridList
+            :columnDefs="columnDefs"
+            :gridOptions="gridOptions"
+            :rowData="rowData"
+          ></AgGridList>
         </v-card>
       </v-col>
       <v-col cols="12">
@@ -69,6 +73,9 @@ export default {
         { headerName: "Title", field: "title" },
         { headerName: "Description", field: "description" },
       ],
+      gridOptions: {
+        domLayout: "autoHeight",
+      },
     };
   },
   watch: {
