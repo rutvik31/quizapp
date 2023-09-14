@@ -2,7 +2,6 @@
   <v-snackbar
     v-model="showSnackbar"
     :color="color"
-    absolute
     top
     right
     text

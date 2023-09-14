@@ -1,7 +1,7 @@
 export default {
   methods: {
     getUserDetails() {
-      this.$api.users.getUserDetails().then((res) => {
+      this.$api.user.getUserDetails().then((res) => {
         const user = res?.data?.data;
         localStorage.setItem("userDeatils", JSON.stringify(user));
         // redirect conditionaly

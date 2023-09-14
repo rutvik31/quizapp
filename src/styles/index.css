@@ -1,3 +1,5 @@
+@import "./navbar.css";
+
 /* App */
 .app-content {
   padding-left: 20px;
@@ -49,4 +51,25 @@
 /* For v-btn */
 .v-btn__content {
   text-transform: capitalize;
+}
+
+/* For Cards */
+.card-style {
+  margin-right: auto !important;
+  margin-left: auto !important;
+  border-radius: 20px !important;
+}
+.card-button {
+  background: linear-gradient(to bottom, #4dc7d9 0%, #66a6ff 100%) !important;
+}
+
+.fuck {
+  position: fixed !important;
+  z-index: -1 !important;
+  top: -100px !important;
+  left: -100px !important;
+  right: -100px !important;
+  height: 60vh !important;
+  rotate: -4deg !important;
+  background: #0f71ff !important;
 }

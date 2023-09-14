@@ -1,16 +1,10 @@
 <template>
-  <v-navigation-drawer
-    elevate-on-scroll
-    clipped
-    v-model="drawer"
-    app
-    :mini-variant.sync="mini"
-  >
+  <v-navigation-drawer clipped v-model="drawer" app :mini-variant.sync="mini">
     <v-list-item class="px-2">
       <v-list-item-avatar size="38" color="indigo">
         <v-icon dark> mdi-account-circle </v-icon>
       </v-list-item-avatar>
-      <v-list-item-title>Admin</v-list-item-title>
+      <v-list-item-title>Hello, {{ getUser }}</v-list-item-title>
       <v-btn icon @click.stop="mini = !mini">
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
@@ -91,6 +85,10 @@ export default {
       set(val) {
         this.$emit("input", val);
       },
+    },
+    getUser() {
+      const user = JSON.parse(localStorage.getItem("userDeatils"));
+      return `${user.firstName} ${user.lastName}`;
     },
   },
   methods: {

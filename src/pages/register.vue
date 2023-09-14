@@ -67,7 +67,7 @@ export default {
       const user = {
         ...this.user,
       };
-      this.$api.users
+      this.$api.user
         .register(user)
         .then((res) => {
           this.$bus.$emit("showSnakeBar", res?.data?.message, "success");
@@ -94,7 +94,6 @@ export default {
       return true;
     },
     isValidEmail(email) {
-      // Simple email validation using regex
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     },

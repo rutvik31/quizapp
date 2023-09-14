@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <div class="fuck"></div>
     <router-view />
     <Snackbar
       v-model="showSnakbar"

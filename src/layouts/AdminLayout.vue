@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar absolute clipped-left app color="primary">
+    <v-app-bar elevate-on-scroll clipped-left app color="primary">
       <v-app-bar-nav-icon
         color="white"
         @click="drawer = !drawer"
@@ -8,7 +8,7 @@
       <v-toolbar-title class="white--text">Quiz App </v-toolbar-title>
     </v-app-bar>
     <v-main>
-      <SideNavigation v-model="drawer" />
+      <NavigationAdmin v-model="drawer" />
       <div class="app-content">
         <router-view></router-view>
       </div>
@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import SideNavigation from "@/components/general/SideNavigation.vue";
+import NavigationAdmin from "@/components/general/NavigationAdmin.vue";
 
 export default {
   name: "AdminLayout",
   components: {
-    SideNavigation,
+    NavigationAdmin,
   },
   data() {
     return {

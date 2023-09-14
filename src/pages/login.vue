@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     async login() {
-      this.$api.users
+      this.$api.user
         .login(this.user)
         .then((res) => {
           const token = res?.data?.token;
@@ -76,7 +76,6 @@ export default {
       return true;
     },
     isValidEmail(email) {
-      // Simple email validation using regex
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     },

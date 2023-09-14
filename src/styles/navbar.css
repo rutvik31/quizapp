@@ -1,0 +1,39 @@
+/* navbar.css */
+.navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  width: 100%;
+  height: 65px;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+  z-index: 100;
+}
+
+.navbar a {
+  color: inherit;
+  text-decoration: none;
+  transition: 0.3s;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.navbar span {
+  margin-right: 10px;
+}
+
+.v-tabs-fonts {
+  color: black !important;
+}
+
+.active-link {
+  color: #2962ff !important;
+}
+
+.avatar {
+  cursor: pointer !important;
+}

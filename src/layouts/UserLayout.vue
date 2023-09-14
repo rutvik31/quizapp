@@ -1,23 +1,79 @@
 <template>
   <div>
-    <v-app-bar elevate-on-scroll clipped app color="primary">
-      <v-toolbar-title class="white--text text-h6">Quiz App</v-toolbar-title>
+    <nav id="navbar" class="navbar">
+      <v-icon size="36px" class="px-2">mdi-help-box-multiple-outline</v-icon>
+      <router-link
+        v-for="(item, index) in items"
+        :key="index"
+        exact
+        :to="item.path"
+        :prev-icon="items.icon"
+        class="v-tabs-fonts"
+        :exact-active-class="'active-link'"
+      >
+        {{ item.name }}
+      </router-link>
       <v-spacer></v-spacer>
-      <v-btn @click="logout">
-        Logout
-        <v-icon right dark @click="logout">mdi-logout </v-icon>
-      </v-btn>
-    </v-app-bar>
-    <v-main>
-      <div class="app-content">
-        <router-view></router-view>
-      </div>
-    </v-main>
+      <v-menu bottom rounded offset-y>
+        <template v-slot:activator="{ on }">
+          <v-avatar v-on="on" color="primary" class="avatar">
+            <span class="white--text text-h5 ma-0">{{ getUserInitial }}</span>
+          </v-avatar>
+        </template>
+        <v-list class="py-0">
+          <v-list-item @click="logout" link class="text-center">
+            <v-list-item-title>Logout</v-list-item-title>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </nav>
+    <div>
+      <v-main>
+        <div class="app-content">
+          <router-view></router-view>
+        </div>
+      </v-main>
+    </div>
   </div>
 </template>
+
 <script>
 export default {
   name: "UserLayout",
+  components: {},
+  data() {
+    return {
+      items: [
+        {
+          name: "Dashboard",
+          path: "/user",
+          icon: "mdi-view-dashboard-outline",
+        },
+        {
+          name: "Quiz List",
+          path: "/user/quiz",
+          icon: "mdi-help-box-multiple-outline",
+        },
+      ],
+      activeTab: 0,
+    };
+  },
+  computed: {
+    getUserInitial() {
+      const user = JSON.parse(localStorage.getItem("userDeatils"));
+      const firstNameInitial = user.firstName.charAt(0).toUpperCase();
+      const lastNameInitial = user.lastName.charAt(0).toUpperCase();
+      return `${firstNameInitial}${lastNameInitial}`;
+    },
+    getUserName() {
+      const user = JSON.parse(localStorage.getItem("userDeatils"));
+      return (
+        `${user.firstName}`.charAt(0).toUpperCase() +
+        `${user.firstName}`.slice(1)
+      );
+    },
+  },
   methods: {
     logout() {
       localStorage.clear();

@@ -1,0 +1,21 @@
+// Globals
+// SCSS Community
+@use "~ag-grid-community/styles" as ag;
+
+// Choose balham over default alpine
+@include ag.grid-styles(
+  (
+    theme: balham,
+  )
+);
+
+$body-font-family: "Open Sans";
+$font-size-root: 14px;
+$btn-sizes: (
+  "default": 60,
+  "large": 54,
+);
+
+.v-application {
+  font-family: "Open Sans" !important;
+}

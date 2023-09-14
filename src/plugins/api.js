@@ -5,7 +5,7 @@ import question from "@/services/question";
 import quiz from "@/services/quiz";
 
 export default {
-  users: user(axiosInstance),
+  user: user(axiosInstance),
   tag: tag(axiosInstance),
   question: question(axiosInstance),
   quiz: quiz(axiosInstance),
