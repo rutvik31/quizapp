@@ -2,8 +2,8 @@
   <v-row class="ma-0">
     <v-col cols="12">
       <v-text-field
-        dense
-        outlined
+        solo
+        rounded
         v-model="filters.search"
         :clearable="true"
         clear-icon="mdi-close-circle"
@@ -29,7 +29,7 @@
       sm="6"
       md="4"
       lg="3"
-      xl="2"
+      xl="3"
       v-for="(items, index) in quizList"
       :key="index"
     >

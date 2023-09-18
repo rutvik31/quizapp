@@ -1,6 +1,6 @@
 <template>
   <v-container class="d-flex justify-center align-center registerContainer">
-    <v-card width="400px">
+    <v-card width="400px" class="login-rgister-card">
       <v-card-title class="text-center">Register</v-card-title>
       <v-card-text>
         <v-form v-model="valid" @submit.prevent="register" ref="form">

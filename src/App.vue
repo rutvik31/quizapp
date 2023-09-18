@@ -1,12 +1,14 @@
 <template>
   <v-app>
-    <div class="fuck"></div>
-    <router-view />
-    <Snackbar
-      v-model="showSnakbar"
-      :message="snackbarMessage"
-      :type="snackbarType"
-    />
+    <div class="background-container">
+      <v-img class="background-image" src="./assets/Rectangle1.svg"></v-img>
+      <router-view />
+      <Snackbar
+        v-model="showSnakbar"
+        :message="snackbarMessage"
+        :type="snackbarType"
+      />
+    </div>
   </v-app>
 </template>
 
@@ -36,3 +38,19 @@ export default {
   },
 };
 </script>
+<style scoped>
+.background-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}
+</style>

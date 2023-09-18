@@ -10,7 +10,6 @@
       </v-col>
       <form @submit.prevent="submitQuiz" ref="form">
         <v-card
-          outlined
           :key="quiz?.questions[currentQuestionIndex]._id"
           class="my-4 pa-0"
         >
@@ -70,18 +69,30 @@
             </div>
           </v-card-text>
           <v-divider />
+          {{ selectedAnswers }}
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
               v-if="showNextButton"
-              @click="nextQuestion"
+              @click="
+                nextQuestion();
+                calulateProgress();
+              "
               color="primary"
+              rounded
               large
             >
-              Next Question
+              Next
             </v-btn>
-            <v-btn v-if="isLastQuestion" type="submit" color="primary" large>
-              Submit Quiz
+            <v-btn
+              v-if="isLastQuestion"
+              @click="calulateProgress"
+              type="submit"
+              color="primary"
+              large
+              rounded
+            >
+              Submit
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -98,6 +109,7 @@ export default {
       quiz: null,
       selectedAnswers: [],
       currentQuestionIndex: 0,
+      progress: 0,
     };
   },
   created() {
@@ -109,17 +121,6 @@ export default {
     },
     showNextButton() {
       return this.currentQuestionIndex < this.quiz?.questions.length - 1;
-    },
-    progress() {
-      if (this.quiz) {
-        const totalQuestions = this.quiz.questions.length;
-        const answeredQuestions = this.selectedAnswers.filter(
-          (answer) => answer !== null
-        ).length;
-        const percentage = (answeredQuestions / totalQuestions) * 100;
-        return Math.round(percentage);
-      }
-      return 0;
     },
   },
   methods: {
@@ -152,6 +153,16 @@ export default {
           .catch(() => {
             this.$bus.$emit("showSnakeBar", "Error submitting quiz", "error");
           });
+      }
+    },
+    calulateProgress() {
+      if (this.quiz) {
+        let answeredQuestions = this.selectedAnswers.filter((a) =>
+          Array.isArray(a) ? a.length : true
+        ).length;
+        this.progress = Math.floor(
+          (answeredQuestions / this.quiz.questions.length) * 100
+        );
       }
     },
     nextQuestion() {

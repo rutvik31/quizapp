@@ -1,14 +1,14 @@
 <template>
-  <v-navigation-drawer clipped v-model="drawer" app :mini-variant.sync="mini">
-    <v-list-item class="px-2">
-      <v-list-item-avatar size="38" color="indigo">
-        <v-icon dark> mdi-account-circle </v-icon>
-      </v-list-item-avatar>
-      <v-list-item-title>Hello, {{ getUser }}</v-list-item-title>
-      <v-btn icon @click.stop="mini = !mini">
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-    </v-list-item>
+  <v-navigation-drawer
+    v-model="drawer"
+    permanent
+    expand-on-hover
+    app
+    :mini-variant.sync="mini"
+  >
+    <div class="d-flex align-center pa-2">
+      <img src="../../assets/Q.svg" alt="Logo" height="37 " />
+    </div>
     <v-divider></v-divider>
     <v-list>
       <v-list-item

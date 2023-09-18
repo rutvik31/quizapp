@@ -1,7 +1,15 @@
 <template>
   <div>
     <nav id="navbar" class="navbar">
-      <v-icon size="36px" class="px-2">mdi-help-box-multiple-outline</v-icon>
+      <div class="d-flex align-center">
+        <img src="../assets/Q.svg" alt="Logo" height="45" />
+        <img
+          src="../assets/dot.svg"
+          alt="Logo"
+          class="d-flex align-self-end pl-1"
+          height="auto"
+        />
+      </div>
       <router-link
         v-for="(item, index) in items"
         :key="index"
@@ -31,7 +39,7 @@
     <div>
       <v-main>
         <div class="app-content">
-          <router-view></router-view>
+          <router-view class="full-height"></router-view>
         </div>
       </v-main>
     </div>
@@ -51,7 +59,7 @@ export default {
           icon: "mdi-view-dashboard-outline",
         },
         {
-          name: "Quiz List",
+          name: "Quiz",
           path: "/user/quiz",
           icon: "mdi-help-box-multiple-outline",
         },
