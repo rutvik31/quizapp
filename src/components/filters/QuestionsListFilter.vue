@@ -72,12 +72,19 @@
         </template>
       </v-select>
     </v-col>
+    <div class="px-0 py-1" v-for="filter in selectedFilters" :key="filter">
+      <FilterChip :filter="filter" @remove-filter="removeFilter" />
+    </div>
   </v-row>
 </template>
 
 <script>
+import FilterChip from "@/components/filters/FilterChip.vue";
 export default {
-  name: "QuestionFilter",
+  name: "QuestionListFilter",
+  components: {
+    FilterChip,
+  },
   data() {
     return {
       filters: {
@@ -103,6 +110,13 @@ export default {
     tagList() {
       return this.$store?.state?.tags?.tagsList?.data;
     },
+    selectedFilters() {
+      return [
+        ...this.filters.tags,
+        ...this.filters.difficulty,
+        ...this.filters.ansType,
+      ];
+    },
   },
   methods: {
     handleChange(filter) {
@@ -112,6 +126,14 @@ export default {
       this.debounceTimer = setTimeout(() => {
         this.$emit("filter-changed", filter);
       }, 800);
+    },
+    removeFilter(filter) {
+      Object.keys(this.filters).forEach((key) => {
+        const index = this.filters[key].indexOf(filter);
+        if (index !== -1) {
+          this.filters[key].splice(index, 1);
+        }
+      });
     },
   },
 };

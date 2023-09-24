@@ -27,17 +27,12 @@
       </v-list-item>
     </v-list>
     <template v-slot:append>
-      <v-tooltip right>
-        <template v-slot:activator="{ on, attrs }">
-          <v-list-item :ripple="false" v-bind="attrs" v-on="on" @click="logout">
-            <v-list-item-icon>
-              <v-icon>mdi-logout-variant</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content> Logout </v-list-item-content>
-          </v-list-item>
-        </template>
-        <span>Logout</span>
-      </v-tooltip>
+      <v-list-item :ripple="false" @click="logout">
+        <v-list-item-icon>
+          <v-icon>mdi-logout-variant</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content> Logout </v-list-item-content>
+      </v-list-item>
     </template>
   </v-navigation-drawer>
 </template>

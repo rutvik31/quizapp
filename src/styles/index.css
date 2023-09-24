@@ -29,15 +29,25 @@
 
 /* Options Style */
 .options-style {
-  background-color: #e7e9eb;
+  border: 1px solid black !important;
   position: relative;
   padding: 10px 0px 10px 10px;
-  margin-bottom: 2px !important;
+  margin-bottom: 15px !important;
   cursor: pointer;
   font-size: 18px;
   user-select: none;
   word-wrap: break-word;
 }
+
+/* Options style for quiz result */
+.options-quiz {
+  border: 1px solid black !important;
+  position: relative;
+  padding: 5px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+}
+
 /* Questions text */
 .questions-text {
   font-size: 18px;
@@ -66,4 +76,13 @@
   border: 1px solid !important;
   border-color: #f9f9f9 !important;
   box-shadow: 0px 0px 10px -9px !important;
+}
+
+/* For answers */
+.right {
+  background-color: lightgreen !important;
+}
+
+.wrong {
+  background-color: lightcoral !important;
 }

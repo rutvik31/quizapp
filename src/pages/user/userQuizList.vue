@@ -1,6 +1,6 @@
 <template>
   <v-row class="ma-0">
-    <v-col cols="12">
+    <v-col cols="6">
       <v-text-field
         solo
         rounded
@@ -16,12 +16,24 @@
         </template>
       </v-text-field>
     </v-col>
+    <v-col cols="6" class="d-flex align-center justify-end">
+      <span class="px-2">Sort by latest date :</span>
+      <v-checkbox
+        class="ma-0 pa-0"
+        v-model="sortBy"
+        value="latest"
+        hide-details="auto"
+      />
+    </v-col>
+    <v-col v-if="sortBy" cols="12" class="py-0">
+      <FilterChip :filter="sortBy" @remove-filter="removeFilter" />
+    </v-col>
     <v-col
       cols="12"
       v-if="!quizList.length"
       class="d-flex align-center justify-center"
     >
-      <p class="text-h5">No records found.</p>
+      <p class="text-h5">No results found.</p>
     </v-col>
     <v-col
       cols="12"
@@ -37,12 +49,12 @@
         <v-card-text>
           <p class="text-h5 text--primary">{{ items.title }}</p>
           <div>
-            {{ items.description }}
+            Its not a competition, its just a simple way to see how much you
+            know.
           </div>
         </v-card-text>
         <v-card-actions class="d-flex align-center">
           <v-chip class="px-4">
-            <v-icon left small> mdi-calendar-range </v-icon>
             {{ formatDate(items.createdAt) }}
           </v-chip>
           <v-spacer></v-spacer>
@@ -59,13 +71,20 @@
   </v-row>
 </template>
 <script>
+import moment from "moment";
+import FilterChip from "@/components/filters/FilterChip.vue";
+// Mixins
 import listMixin from "@/mixins/list.mixin";
 export default {
   name: "UserQuizList",
   mixins: [listMixin],
+  components: {
+    FilterChip,
+  },
   data() {
     return {
       search: "",
+      sortBy: "",
     };
   },
   watch: {
@@ -73,6 +92,11 @@ export default {
       deep: true,
       handler(filter) {
         this.handleValueChange(filter);
+      },
+    },
+    sortBy: {
+      handler() {
+        this.getQuizList();
       },
     },
   },
@@ -97,6 +121,7 @@ export default {
       const params = {
         ...this.filters,
         ...this.pagination,
+        sortby: this.sortBy,
       };
       this.$store.dispatch("quiz/getQuizList", params).then(() => {
         this.totalPages =
@@ -104,9 +129,12 @@ export default {
       });
     },
     formatDate(dateTime) {
-      const date = new Date(dateTime);
-      const options = { month: "short", day: "numeric" };
-      return date.toLocaleDateString(undefined, options);
+      const pastDate = moment(dateTime);
+      const relativeTime = pastDate.fromNow();
+      return relativeTime.charAt(0).toUpperCase() + relativeTime.slice(1);
+    },
+    removeFilter() {
+      this.sortBy = "";
     },
   },
   mounted() {

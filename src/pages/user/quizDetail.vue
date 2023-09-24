@@ -1,13 +1,11 @@
 <template>
-  <v-row class="ma-0" justify="center">
-    <v-col cols="12">
-      <v-col cols="12" class="px-0">
-        <v-progress-linear :value="progress" height="25" color="primary">
-          <span class="white--text">
-            <b>{{ progress }}%</b>
-          </span>
-        </v-progress-linear>
-      </v-col>
+  <div>
+    <v-container class="px-0 py-4">
+      <v-progress-linear :value="progress" height="25" color="primary">
+        <span class="white--text">
+          <b>{{ progress }}% Completed</b>
+        </span>
+      </v-progress-linear>
       <form @submit.prevent="submitQuiz" ref="form">
         <v-card
           :key="quiz?.questions[currentQuestionIndex]._id"
@@ -21,9 +19,9 @@
           >
             <div class="d-flex align-center">
               <h3 class="px-2">Q.{{ currentQuestionIndex + 1 }}</h3>
-              <span class="questions-text">{{
-                quiz?.questions[currentQuestionIndex]?.question
-              }}</span>
+              <span class="questions-text">
+                {{ quiz?.questions[currentQuestionIndex]?.question }}
+              </span>
             </div>
             <v-radio-group
               v-if="quiz?.questions[currentQuestionIndex].ansType === 'single'"
@@ -69,7 +67,6 @@
             </div>
           </v-card-text>
           <v-divider />
-          {{ selectedAnswers }}
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
@@ -97,19 +94,30 @@
           </v-card-actions>
         </v-card>
       </form>
-    </v-col>
-  </v-row>
+    </v-container>
+    <QuizResult
+      v-model="showResultDialog"
+      :questionList="questionList"
+      :selectedAnswers="selectedAnswers"
+    />
+  </div>
 </template>
 
 <script>
+import QuizResult from "@/pages/user/quizResult.vue";
 export default {
   name: "QuizDetail",
+  components: {
+    QuizResult,
+  },
   data() {
     return {
       quiz: null,
+      questionList: null,
       selectedAnswers: [],
       currentQuestionIndex: 0,
       progress: 0,
+      showResultDialog: false,
     };
   },
   created() {
@@ -142,13 +150,15 @@ export default {
       if (this.currentQuestionIndex === this.quiz?.questions.length - 1) {
         const payload = await this.generatePayload();
         this.$api.user
-          .createUserQuizScore(payload)
-          .then(() => {
+          .createQuizScore(payload)
+          .then((res) => {
             this.$bus.$emit(
               "showSnakeBar",
               "Quiz submitted successfully",
               "success"
             );
+            this.questionList = res.data?.data;
+            this.showResultDialog = true;
           })
           .catch(() => {
             this.$bus.$emit("showSnakeBar", "Error submitting quiz", "error");

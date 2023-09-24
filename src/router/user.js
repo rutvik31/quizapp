@@ -26,7 +26,7 @@ const userRoutes = [
         component: QuizDetails,
         meta: { requiresAuth: true },
       },
-    ],
+          ],
   },
 ];
 
