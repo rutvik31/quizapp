@@ -2,8 +2,8 @@
 export const REGISTER = "/register";
 export const LOGIN = "/login";
 export const USER_DETAILS = "/user-deatils";
-export const CREATE_SCORE = "/create-result";
-export const GET_SCORE = "/get-score";
+export const SUBMIT_QUIZ = "/create-result";
+export const GET_RESULT = "/get-score";
 
 // For Tags
 export const CREATE_TAG = "/create-tag";

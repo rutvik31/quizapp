@@ -1,14 +1,14 @@
 <template>
-  <v-navigation-drawer
-    v-model="drawer"
-    permanent
-    expand-on-hover
-    app
-    :mini-variant.sync="mini"
-  >
-    <div class="d-flex align-center pa-2">
-      <img src="../../assets/Q.svg" alt="Logo" height="37 " />
-    </div>
+  <v-navigation-drawer v-model="drawer" permanent app :mini-variant.sync="mini">
+    <v-list-item class="px-0">
+      <div class="d-flex align-center pa-2">
+        <img src="../../assets/Q.svg" alt="Logo" height="37 " />
+      </div>
+      <v-spacer></v-spacer>
+      <v-btn icon @click.stop="mini = !mini">
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
+    </v-list-item>
     <v-divider></v-divider>
     <v-list>
       <v-list-item

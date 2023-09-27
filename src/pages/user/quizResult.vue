@@ -22,9 +22,16 @@
       <v-card-text>
         <div class="d-flex align-center justify-center">
           <v-icon size="100" color="#f4511e">mdi-fire</v-icon>
-          <span class="text-h5"
-            >Your Score is: {{ countScore }} out of
-            {{ questionList.questions.length }}</span
+        </div>
+        <div class="d-flex align-center justify-center py-2">
+          <span class="text-h5">
+            Your Score is: {{ countScore }} out of
+            {{ questionList?.questions?.length }}
+          </span>
+        </div>
+        <div class="d-flex align-center justify-center py-2">
+          <span class="text-h6">
+            {{ getText(questionList?.questions?.length) }}</span
           >
         </div>
         <div
@@ -89,6 +96,19 @@ export default {
   methods: {
     closeResultDialog() {
       this.resultDialogVisible = false;
+    },
+    getText(questionLength) {
+      const userScore = (this.countScore / questionLength) * 100;
+
+      if (userScore === 50) {
+        return "Great job!! Keep it Up 👏";
+      } else if (userScore >= 70) {
+        return "Excellent! You're doing really well 🎉 ";
+      } else if (userScore >= 50) {
+        return "Good effort! Keep improving 💪";
+      } else {
+        return "You can do better. Keep practicing 👍";
+      }
     },
     getClass(question, selectedAnswer, optIndex) {
       if (selectedAnswer === undefined) return;

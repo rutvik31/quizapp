@@ -1,7 +1,7 @@
 <template>
   <v-row class="ma-0">
-    <v-col cols="12">
-      <div class="header-title text-h5">Scores</div>
+    <v-col cols="9">
+      <div class="header-title text-h5">Results</div>
     </v-col>
     <v-col cols="12" class="py-0">
       <AgGridList
@@ -15,6 +15,7 @@
 </template>
 <script>
 import AgGridList from "@/components/general/AgGridList.vue";
+import moment from "moment";
 export default {
   name: "QuizScore",
   components: {
@@ -26,16 +27,30 @@ export default {
         {
           headerName: "Quiz Name",
           field: "quizName",
+          sortable: true,
         },
-        { headerName: "Score", field: "score" },
+        { headerName: "Score", field: "score", sortable: true },
+        {
+          headerName: "Time Ago",
+          field: "createdAt",
+          sortable: true,
+          valueFormatter: (params) => {
+            const createdAt = moment(params.value);
+            return createdAt.fromNow();
+          },
+        },
       ],
       gridOptions: {
         domLayout: "autoHeight",
+        pagination: true,
+        paginationPageSize: 10,
       },
-      rowData: [],
     };
   },
   computed: {
+    rowData() {
+      return this.$store?.state?.result?.resultsList?.data;
+    },
     userId() {
       const id = JSON.parse(localStorage.getItem("userDeatils"));
       return id._id;
@@ -43,9 +58,7 @@ export default {
   },
   methods: {
     getuserScore() {
-      this.$api.user.getUserQuizScore(this.userId).then((res) => {
-        this.rowData = res?.data?.data;
-      });
+      this.$store.dispatch("result/getResultsList", this.userId);
     },
   },
   mounted() {

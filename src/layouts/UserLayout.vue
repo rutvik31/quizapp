@@ -56,12 +56,14 @@ export default {
         {
           name: "Dashboard",
           path: "/user",
-          icon: "mdi-view-dashboard-outline",
         },
         {
           name: "Quiz",
           path: "/user/quiz",
-          icon: "mdi-help-box-multiple-outline",
+        },
+        {
+          name: "Results",
+          path: "/user/results",
         },
       ],
       activeTab: 0,

@@ -9,7 +9,13 @@
   )
 );
 
-$body-font-family: "Montserrat";
+.ag-theme-balham {
+  --ag-grid-size: 5px !important;
+  --ag-list-item-height: 5px !important;
+  --ag-font-size: 16px !important;
+}
+
+$body-font-family: "Poppins";
 $font-size-root: 14px;
 $btn-sizes: (
   "default": 60,
@@ -21,5 +27,5 @@ $btn-sizes: (
 .v-application .text-h2,
 .v-application .text-h5,
 .v-application .text-h6 {
-  font-family: "Montserrat" !important;
+  font-family: "Poppins" !important;
 }

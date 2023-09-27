@@ -47,14 +47,16 @@
     >
       <v-card class="card-style">
         <v-card-text>
-          <p class="text-h5 text--primary">{{ items.title }}</p>
+          <v-card-title class="px-0 pt-0 poppins">
+            {{ items.title }}
+          </v-card-title>
           <div>
             Its not a competition, its just a simple way to see how much you
             know.
           </div>
         </v-card-text>
         <v-card-actions class="d-flex align-center">
-          <v-chip class="px-4">
+          <v-chip class="px-4 poppins">
             {{ formatDate(items.createdAt) }}
           </v-chip>
           <v-spacer></v-spacer>
@@ -83,7 +85,6 @@ export default {
   },
   data() {
     return {
-      search: "",
       sortBy: "",
     };
   },

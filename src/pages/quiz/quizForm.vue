@@ -80,7 +80,7 @@
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            :disabled="!valid"
+            :disabled="!fetchQuestionIds.length"
             color="primary"
             class="rounded-0"
             @click="saveQuiz"

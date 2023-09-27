@@ -38,7 +38,7 @@
                 class="options-style"
               >
                 <template v-slot:label>
-                  <h4>{{ option }}</h4>
+                  <span>{{ option }}</span>
                 </template>
               </v-radio>
             </v-radio-group>
@@ -61,7 +61,7 @@
                 :class="{ 'mt-0': optIndex !== 0 }"
               >
                 <template v-slot:label>
-                  <h4>{{ option }}</h4>
+                  <span>{{ option }}</span>
                 </template>
               </v-checkbox>
             </div>
@@ -84,6 +84,7 @@
             <v-btn
               v-if="isLastQuestion"
               @click="calulateProgress"
+              :disabled="isSubmitButtonDisabled"
               type="submit"
               color="primary"
               large
@@ -118,6 +119,7 @@ export default {
       currentQuestionIndex: 0,
       progress: 0,
       showResultDialog: false,
+      isSubmitButtonDisabled: false,
     };
   },
   created() {
@@ -148,9 +150,10 @@ export default {
     },
     async submitQuiz() {
       if (this.currentQuestionIndex === this.quiz?.questions.length - 1) {
+        this.isSubmitButtonDisabled = true;
         const payload = await this.generatePayload();
         this.$api.user
-          .createQuizScore(payload)
+          .submitQuiz(payload)
           .then((res) => {
             this.$bus.$emit(
               "showSnakeBar",

@@ -24,11 +24,11 @@
           ></v-text-field>
           <v-text-field
             v-model="user.password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             label="Password"
             outlined
-            @click:append="show1 = !show1"
-            :type="show1 ? 'text' : 'password'"
+            @click:append="showPassword = !showPassword"
+            :type="showPassword ? 'text' : 'password'"
             :rules="[requiredRule('Password')]"
           ></v-text-field>
           <v-btn :disabled="!valid" type="submit" color="primary" block>
@@ -59,7 +59,7 @@ export default {
       },
       errors: {},
       valid: false,
-      show1: false,
+      showPassword: false,
     };
   },
   methods: {
@@ -67,6 +67,7 @@ export default {
       const user = {
         ...this.user,
       };
+      this.valid = false;
       this.$api.user
         .register(user)
         .then((res) => {
@@ -80,6 +81,7 @@ export default {
             err?.response?.data?.message,
             "error"
           );
+          this.valid = true;
         });
     },
     requiredRule(fieldName) {

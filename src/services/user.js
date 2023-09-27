@@ -1,4 +1,10 @@
-import { REGISTER, LOGIN, USER_DETAILS, CREATE_SCORE } from "@/utils/constants";
+import {
+  REGISTER,
+  LOGIN,
+  USER_DETAILS,
+  SUBMIT_QUIZ,
+  GET_RESULT,
+} from "@/utils/constants";
 
 export default (axios) => ({
   register(user) {
@@ -10,7 +16,10 @@ export default (axios) => ({
   getUserDetails() {
     return axios.get(USER_DETAILS);
   },
-  createQuizScore(user) {
-    return axios.post(CREATE_SCORE, user);
+  submitQuiz(user) {
+    return axios.post(SUBMIT_QUIZ, user);
+  },
+  getResult(userId) {
+    return axios.get(`${GET_RESULT}/${userId}`);
   },
 });

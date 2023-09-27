@@ -46,6 +46,8 @@
   padding: 5px;
   margin-bottom: 7px;
   margin-top: 7px;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 /* Questions text */
@@ -80,9 +82,16 @@
 
 /* For answers */
 .right {
-  background-color: lightgreen !important;
+  background-color: #d9eee1;
+  color: #04aa6d;
 }
 
 .wrong {
-  background-color: lightcoral !important;
+  background-color: #ffc0c7 !important;
+  color: #b94a48;
+}
+
+/* For all the headings */
+.poppins {
+  font-family: "Poppins" !important;
 }

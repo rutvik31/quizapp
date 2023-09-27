@@ -1,6 +1,7 @@
 <template>
-  <div class="ag-theme-balham">
+  <div>
     <ag-grid-vue
+      class="ag-theme-balham"
       :gridOptions="gridOptions"
       :columnDefs="columnDefs"
       :defaultColDef="defaultColDef"
