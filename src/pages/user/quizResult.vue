@@ -20,12 +20,9 @@
         </v-icon>
       </v-card-title>
       <v-card-text>
-        <div class="d-flex align-center justify-center">
-          <v-icon size="100" color="#f4511e">mdi-fire</v-icon>
-        </div>
         <div class="d-flex align-center justify-center py-2">
           <span class="text-h5">
-            Your Score is: {{ countScore }} out of
+            Your Scored: {{ countScore }} out of
             {{ questionList?.questions?.length }}
           </span>
         </div>

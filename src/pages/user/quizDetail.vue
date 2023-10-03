@@ -7,6 +7,9 @@
         </span>
       </v-progress-linear>
       <form @submit.prevent="submitQuiz" ref="form">
+        <div v-if="quiz?.timer" class="text-h6 d-flex justify-end pt-4">
+          {{ formatTime(timer) }} Minutes left
+        </div>
         <v-card
           :key="quiz?.questions[currentQuestionIndex]._id"
           class="my-4 pa-0"
@@ -106,6 +109,8 @@
 
 <script>
 import QuizResult from "@/pages/user/quizResult.vue";
+import moment from "moment";
+
 export default {
   name: "QuizDetail",
   components: {
@@ -120,10 +125,22 @@ export default {
       progress: 0,
       showResultDialog: false,
       isSubmitButtonDisabled: false,
+      timer: 0,
+      timerInterval: null,
     };
   },
   created() {
     this.fetchQuiz(this.$route.params.id);
+  },
+  watch: {
+    quiz: {
+      handler() {
+        if (this.quiz) {
+          this.startTimer();
+        }
+      },
+      deep: true,
+    },
   },
   computed: {
     isLastQuestion() {
@@ -183,6 +200,32 @@ export default {
         this.currentQuestionIndex++;
       }
     },
+    startTimer() {
+      if (this.quiz && this.quiz.timer > 0) {
+        const quizTimeInMinutes = this.quiz?.timer || 0;
+        this.timer = quizTimeInMinutes * 60;
+
+        this.timerInterval = setInterval(() => {
+          if (this.timer > 0) {
+            this.timer--;
+          } else {
+            clearInterval(this.timerInterval);
+            this.submitQuiz();
+          }
+        }, 1000);
+      }
+    },
+    formatTime(seconds) {
+      const duration = moment.duration(seconds, "seconds");
+      const minutes = String(duration.minutes()).padStart(2, "0");
+      const remainingSeconds = String(duration.seconds()).padStart(2, "0");
+      return `${minutes}:${remainingSeconds}`;
+    },
+  },
+  beforeDestroy() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
   },
 };
 </script>

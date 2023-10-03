@@ -30,6 +30,16 @@
                     :rules="[requiredRule('Quiz description')]"
                   />
                 </v-col>
+                <v-col cols="12">
+                  <v-select
+                    v-model="quizObject.timer"
+                    :items="items"
+                    hide-details="auto"
+                    label="Select time limit"
+                    outlined
+                    dense
+                  />
+                </v-col>
               </v-row>
             </v-form>
           </v-card-text>
@@ -150,10 +160,12 @@ export default {
         title: "",
         description: "",
         questions: [],
+        timer: 0,
       },
       valid: false,
       fetchQuestionIds: [],
       e1: 1,
+      items: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60],
     };
   },
   computed: {
@@ -162,6 +174,9 @@ export default {
     },
     rowData() {
       return this.$store?.state?.questions?.questionsList?.data;
+    },
+    minutes() {
+      return this.items.map((item) => `${item} minutes`);
     },
   },
   methods: {

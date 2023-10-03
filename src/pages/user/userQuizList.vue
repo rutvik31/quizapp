@@ -49,10 +49,18 @@
         <v-card-text>
           <v-card-title class="px-0 pt-0 poppins">
             {{ items.title }}
+            <v-spacer></v-spacer>
+            <v-icon color="#66a6ff" v-if="items.timer">
+              mdi-timer-outline
+            </v-icon>
           </v-card-title>
-          <div>
-            Its not a competition, its just a simple way to see how much you
-            know.
+          <div v-if="items.timer">
+            Embrace the challenge: Conquer this quiz within
+            {{ items.timer }} minutes to showcase your expertise under pressure.
+          </div>
+          <div v-else>
+            Unlock your full potential: Take your time to dive deep into this
+            quiz, absorb knowledge, and excel at your own pace.
           </div>
         </v-card-text>
         <v-card-actions class="d-flex align-center">

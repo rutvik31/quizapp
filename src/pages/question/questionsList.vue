@@ -3,7 +3,7 @@
     <v-row class="ma-0">
       <v-col cols="12" class="px-0">
         <div class="d-flex align-center">
-          <div class="header-title text-h5">Questions</div>
+          <div class="text-h5">Questions</div>
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">

@@ -3,7 +3,7 @@
     <v-row class="ma-0">
       <v-col cols="12" class="px-0">
         <div class="d-flex align-center">
-          <div class="header-title text-h5">Quiz</div>
+          <div class="text-h5">Quiz</div>
           <v-spacer></v-spacer>
           <v-menu offset-y left max-width="100%">
             <template v-slot:activator="{ on, attrs }">
@@ -72,6 +72,13 @@ export default {
       columnDefs: [
         { headerName: "Title", field: "title" },
         { headerName: "Description", field: "description" },
+        {
+          headerName: "Time Limit",
+          field: "timer",
+          cellRenderer: this.timerCellRenderer,
+          sortable: true,
+          sort: "asc",
+        },
       ],
       gridOptions: {
         domLayout: "autoHeight",
@@ -112,6 +119,12 @@ export default {
         this.totalPages =
           this.$store?.state?.quiz?.quizList?.pagination?.totalPages || 1;
       });
+    },
+    timerCellRenderer(params) {
+      if (!params.value) {
+        return '<i class="mdi mdi-infinity"></i>';
+      }
+      return `${params.value} minutes`;
     },
   },
   mounted() {
